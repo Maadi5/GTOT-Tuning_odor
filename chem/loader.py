@@ -16,6 +16,7 @@ from torch_geometric.data import Data
 from torch_geometric.data import InMemoryDataset
 from torch_geometric.data import Batch
 from itertools import repeat, product, chain
+from pathlib import Path
 
 
 # allowable node and edge features
@@ -280,6 +281,7 @@ class MoleculeDataset(InMemoryDataset):
         """
         self.dataset = dataset
         self.root = root
+        self.raw_paths = list(Path(self.root).glob('*'))
 
         super(MoleculeDataset, self).__init__(root, transform, pre_transform,
                                                  pre_filter)
@@ -368,6 +370,7 @@ class MoleculeDataset(InMemoryDataset):
             'dataset/sider',
             'dataset/tox21',
             'dataset/toxcast'
+            'dataset/odour'
             ]
 
             downstream_inchi_set = set()
