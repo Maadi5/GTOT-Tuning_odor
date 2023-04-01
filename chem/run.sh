@@ -1,4 +1,4 @@
-data_path='./'
+data_path='chem/'
 rg_type=gtot_feature_map
 ft_type=gtot
 tag='gtot_cosine'
