@@ -594,6 +594,24 @@ class MoleculeDataset(InMemoryDataset):
                 data_list.append(data)
                 data_smiles_list.append(smiles_list[i])
 
+        elif self.dataset == 'odour':
+            smiles_list, rdkit_mol_objs, labels = \
+                _load_odour_dataset(self.raw_paths[0])
+            for i in range(len(smiles_list)):
+                print(i)
+                rdkit_mol = rdkit_mol_objs[i]
+                # # convert aromatic bonds to double bonds
+                # Chem.SanitizeMol(rdkit_mol,
+                #                  sanitizeOps=Chem.SanitizeFlags.SANITIZE_KEKULIZE)
+                data = mol_to_graph_data_obj_simple(rdkit_mol)
+                # manually add mol id
+                data.id = torch.tensor(
+                    [i])  # id here is the index of the mol in
+                # the dataset
+                data.y = torch.tensor(labels[i, :])
+                data_list.append(data)
+                data_smiles_list.append(smiles_list[i])
+
         elif self.dataset == 'pcba':
             smiles_list, rdkit_mol_objs, labels = \
                 _load_pcba_dataset(self.raw_paths[0])
@@ -1116,6 +1134,50 @@ def _load_muv_dataset(input_path):
     assert len(smiles_list) == len(labels)
     return smiles_list, rdkit_mol_objs_list, labels.values
 
+
+def _load__dataset(input_path):
+    """
+
+    :param input_path:
+    :return: list of smiles, list of rdkit mol obj, np.array containing the
+    labels
+    """
+    input_df = pd.read_csv(input_path, sep=',')
+    smiles_list = input_df['smiles']
+    rdkit_mol_objs_list = [AllChem.MolFromSmiles(s) for s in smiles_list]
+    tasks = ['MUV-466', 'MUV-548', 'MUV-600', 'MUV-644', 'MUV-652', 'MUV-689',
+       'MUV-692', 'MUV-712', 'MUV-713', 'MUV-733', 'MUV-737', 'MUV-810',
+       'MUV-832', 'MUV-846', 'MUV-852', 'MUV-858', 'MUV-859']
+    labels = input_df[tasks]
+    # convert 0 to -1
+    labels = labels.replace(0, -1)
+    # convert nan to 0
+    labels = labels.fillna(0)
+    assert len(smiles_list) == len(rdkit_mol_objs_list)
+    assert len(smiles_list) == len(labels)
+    return smiles_list, rdkit_mol_objs_list, labels.values
+
+
+def _load_odour_dataset(input_path):
+    """
+
+    :param input_path:
+    :return: list of smiles, list of rdkit mol obj, np.array containing the
+    labels
+    """
+    input_df = pd.read_csv(input_path, index_col=False)
+    smiles_list = input_df['smiles']
+    rdkit_mol_objs_list = [AllChem.MolFromSmiles(s) for s in smiles_list]
+    tasks = list(input_df.columns[1:])
+    labels = input_df[tasks]
+    # convert 0 to -1
+    labels = labels.replace(0, -1)
+    # convert nan to 0
+    labels = labels.fillna(0)
+    assert len(smiles_list) == len(rdkit_mol_objs_list)
+    assert len(smiles_list) == len(labels)
+    return smiles_list, rdkit_mol_objs_list, labels.values
+
 def _load_sider_dataset(input_path):
     """
 
@@ -1309,21 +1371,22 @@ def create_all_datasets():
             'muv',
             'sider',
             'tox21',
-            'toxcast'
+            'toxcast',
+            'odour'
             ]
 
     for dataset_name in downstream_dir:
         print(dataset_name)
-        root = "dataset/" + dataset_name
+        root = r"C:\Odour Datasets\non_odour_chem_datasets\dataset\\" + dataset_name
         os.makedirs(root + "/processed", exist_ok=True)
         dataset = MoleculeDataset(root, dataset=dataset_name)
         print(dataset)
 
-
-    dataset = MoleculeDataset(root = "dataset/chembl_filtered", dataset="chembl_filtered")
-    print(dataset)
-    dataset = MoleculeDataset(root = "dataset/zinc_standard_agent", dataset="zinc_standard_agent")
-    print(dataset)
+    dataset = MoleculeDataset(root= r"C:\Odour Datasets\non_odour_chem_datasets\dataset\odour", dataset="odour")
+    # dataset = MoleculeDataset(root = "dataset/chembl_filtered", dataset="chembl_filtered")
+    # print(dataset)
+    # dataset = MoleculeDataset(root = "dataset/zinc_standard_agent", dataset="zinc_standard_agent")
+    # print(dataset)
 
 
 # test MoleculeDataset object
