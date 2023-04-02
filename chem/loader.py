@@ -281,7 +281,8 @@ class MoleculeDataset(InMemoryDataset):
         """
         self.dataset = dataset
         self.root = root
-        self.raw_paths = list(Path(self.root).glob('*'))
+        #Added by maadi
+        #self.raw_paths = list(Path(self.root).glob('*'))
 
         super(MoleculeDataset, self).__init__(root, transform, pre_transform,
                                                  pre_filter)
