@@ -14,7 +14,7 @@ patience=20
 gtot_order=1
 
 dataset=bace
-python ${data_path}/finetune.py --input_model_file ${data_path}/model_gin/contextpred.pth --split scaffold --gpu 0 --runseed 0 --gnn_type gin --dataset ${dataset} --gtot_order ${gtot_order} --regularization_type ${rg_type} --finetune_type ${ft_type} --attention_epochs 10 --attention_iteration_limit 10 --tag ${tag} --save_file ${save_file} --patience ${patience} --dist_metric ${dist_metric} --lr 0.0005 --dropout_ratio 0.25 --trade_off_backbone 0.01 --trade_off_head 0.0001 --decay 0.0005 --batch_size 16 --filename ${filename}
+python ${data_path}/finetune.py --input_model_file ${data_path}/model_gin/contextpred.pth --split scaffold --gpu 0 --runseed 0 --gnn_type gin --dataset ${data_path}/{dataset} --gtot_order ${gtot_order} --regularization_type ${rg_type} --finetune_type ${ft_type} --attention_epochs 10 --attention_iteration_limit 10 --tag ${tag} --save_file ${save_file} --patience ${patience} --dist_metric ${dist_metric} --lr 0.0005 --dropout_ratio 0.25 --trade_off_backbone 0.01 --trade_off_head 0.0001 --decay 0.0005 --batch_size 16 --filename ${filename}
 exit
 dataset=bbbp
 python ${data_path}/finetune.py --input_model_file ${data_path}/model_gin/contextpred.pth --split scaffold --gpu 0 --runseed 0 --gnn_type gin --dataset ${dataset} --gtot_order ${gtot_order} --regularization_type ${rg_type} --finetune_type ${ft_type} --attention_epochs 10 --attention_iteration_limit 10 --tag ${tag} --save_file ${save_file} --patience ${patience} --dist_metric ${dist_metric} --lr 0.01 --dropout_ratio 0.4 --trade_off_backbone 0.000005 --trade_off_head 0.01 --decay 1e-6 --batch_size 32 --filename ${filename}
