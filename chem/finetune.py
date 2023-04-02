@@ -39,7 +39,7 @@ def setup_seed(seed):
     random.seed(seed)
     torch.backends.cudnn.deterministic = True
     ## cuda
-    #torch.cuda.current_device()
+    # torch.cuda.current_device()
     torch.cuda._initialized = True
 
 
