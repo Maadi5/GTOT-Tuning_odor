@@ -373,6 +373,8 @@ def main(args):
 
         smiles_list = pd.read_csv(os.path.join(args.data_path, args.dataset, 'processed/smiles.csv'), header=None)[
             0].tolist()
+
+
         train_dataset, valid_dataset, test_dataset = scaffold_split(dataset, smiles_list, null_value=0,
                                                                     frac_train=train_val_test[0],
                                                                     frac_valid=train_val_test[1],
@@ -381,6 +383,7 @@ def main(args):
 
         print(
             f"scaffold, train:test:val={len(train_dataset)}:{len(valid_dataset)}:{len(test_dataset)}, train_radio:{args.train_radio}")
+        print('train_0: ', train_dataset[0])
     elif args.split == "random":
         train_dataset, valid_dataset, test_dataset = random_split(dataset, null_value=0, frac_train=1.0, frac_valid=0.0,
                                                                   frac_test=0.0, seed=args.seed)
