@@ -362,6 +362,7 @@ def main(args):
         raise ValueError("Invalid dataset name.")
     args.num_tasks = num_tasks
     # set up dataset
+    print('paths: ', os.path.join(args.data_path, args.dataset))
     dataset = MoleculeDataset(os.path.join(args.data_path, args.dataset), dataset=args.dataset)
 
     print(dataset)
