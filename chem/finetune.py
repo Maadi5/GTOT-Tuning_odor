@@ -333,6 +333,7 @@ def Inference(args, model, device, loader, source_getter, target_getter, plot_co
 
 def main(args):
     device = torch.device("cuda:" + str(args.gpu)) if torch.cuda.is_available() else torch.device("cpu")
+    print('device: ', device)
     args.device = device
 
     # Bunch of classification tasks
