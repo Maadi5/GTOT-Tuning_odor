@@ -1174,7 +1174,7 @@ def _load_odour_dataset(input_path):
     rdkit_mol_objs_list = [AllChem.MolFromSmiles(s) for s in smiles_list]
     tasks = list(input_df.columns[1:])
     labels = input_df[tasks]
-    # convert 0 to -1
+    # convert 0 to 1
     labels = labels.replace(0, 1)
     # convert nan to 0
     labels = labels.fillna(0)
