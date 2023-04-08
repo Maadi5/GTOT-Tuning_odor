@@ -403,6 +403,7 @@ def main(args):
     if args.debug:
         shuffle = False
     train_loader = DataLoader(train_dataset, batch_size=args.batch_size, shuffle=shuffle, num_workers=args.num_workers)
+    print('train loader: ', train_loader)
     val_loader = DataLoader(valid_dataset, batch_size=args.batch_size, shuffle=False, num_workers=args.num_workers)
     test_loader = DataLoader(test_dataset, batch_size=args.batch_size, shuffle=False, num_workers=args.num_workers)
 
