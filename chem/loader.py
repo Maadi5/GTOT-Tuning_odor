@@ -1177,7 +1177,8 @@ def _load_odour_dataset(input_path):
     # convert 0 to 1
     labels = labels.replace(0, 1)
     # convert nan to 0
-    labels = labels.fillna(-1)
+    labels = labels.fillna(0)
+
 
     assert len(smiles_list) == len(rdkit_mol_objs_list)
     assert len(smiles_list) == len(labels)
