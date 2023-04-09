@@ -1180,7 +1180,7 @@ def _load_odour_dataset(input_path):
     labels = labels.fillna(0)
     for idx, row in labels.iterrows():
         row_values = [v for k, v in dict(row).items()]
-        print(sum(row_values))
+        print('sum of row values in dataset creator: ', sum(row_values))
         if sum(row_values) == 0:
             print("Missing labels for sample")
 
