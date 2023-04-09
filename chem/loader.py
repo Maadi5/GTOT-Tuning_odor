@@ -1178,7 +1178,11 @@ def _load_odour_dataset(input_path):
     labels = labels.replace(0, 1)
     # convert nan to 0
     labels = labels.fillna(0)
-
+    for idx, row in labels.iterrows():
+        row_values = [v for k, v in dict(row).items()]
+        print(sum(row_values))
+        if sum(row_values) == 0:
+            print("Missing labels for sample")
 
     assert len(smiles_list) == len(rdkit_mol_objs_list)
     assert len(smiles_list) == len(labels)
