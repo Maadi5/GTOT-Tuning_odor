@@ -351,7 +351,7 @@ def train_epoch(args, model, device, loader, optimizer, weights_regularization, 
         print('prediction: ', pred)
 
         y = batch.y.view(pred.shape).to(torch.float64)
-        print('gt: ', y)
+        print('gt: ', (y + 1) / 2)
         # Whether y is non-null or not.
         is_valid = y ** 2 > 0
         # Loss matrix
