@@ -30,7 +30,8 @@ from ftlib.finetune.delta import IntermediateLayerGetter, L2Regularization, get_
 from ftlib.finetune.delta import SPRegularization, FrobeniusRegularization
 
 criterion = nn.BCEWithLogitsLoss(reduction="none")
-
+import warnings
+warnings.filterwarnings('ignore')
 
 def setup_seed(seed):
     torch.manual_seed(seed)
