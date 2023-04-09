@@ -406,20 +406,24 @@ def train_epoch(args, model, device, loader, optimizer, weights_regularization, 
         loss_epoch.append(cls_loss.item())
         if step%32 == 0:
             print('prediction: ')
+            all_o = []
             for p in pred.tolist():
                 plist = []
                 for idx, po in enumerate(p):
                     if po>0.5:
                         plist.append(odours[idx])
-                print(plist)
+                all_o.append(plist)
+            print(all_o)
 
             print('gt: ')
+            all_o = []
             for p in ((y + 1) / 2).tolist():
                 plist = []
                 for idx, po in enumerate(p):
                     if po>0.5:
                         plist.append(odours[idx])
-                print(plist)
+                all_o.append(plist)
+            print(all_o)
     avg_loss = sum(loss_epoch) / len(loss_epoch)
 
     if scheduler is not None: scheduler.step()
