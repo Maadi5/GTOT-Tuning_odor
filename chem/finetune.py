@@ -414,7 +414,7 @@ def train_epoch(args, model, device, loader, optimizer, weights_regularization, 
                     plist.append(odours[idx])
             all_o_preds.append(plist)
 
-        print('gt: ')
+        # print('gt: ')
         all_o_gt = []
         for p in ((y + 1) / 2).tolist():
             plist = []
