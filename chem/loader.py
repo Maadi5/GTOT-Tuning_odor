@@ -1183,7 +1183,7 @@ def _load_odour_dataset(input_path):
     # convert 0 to 1
     labels = labels.replace(0, 1)
     # convert nan to 0
-    labels = labels.fillna(0)
+    labels = labels.fillna(-1)
     for idx, row in labels.iterrows():
         row_values = [v for k, v in dict(row).items()]
         #print('sum of row values in dataset creator: ', sum(row_values))
