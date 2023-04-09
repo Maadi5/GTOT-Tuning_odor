@@ -441,7 +441,7 @@ class MoleculeDataset(InMemoryDataset):
                 rdkit_mol = rdkit_mol_objs[i]
                 ## convert aromatic bonds to double bonds
                 #Chem.SanitizeMol(rdkit_mol,
-                                 #sanitizeOps=Chem.SanitizeFlags.SANITIZE_KEKULIZE)
+                #sanitizeOps=Chem.SanitizeFlags.SANITIZE_KEKULIZE)
                 data = mol_to_graph_data_obj_simple(rdkit_mol)
                 # manually add mol id
                 data.id = torch.tensor(
@@ -602,7 +602,7 @@ class MoleculeDataset(InMemoryDataset):
             smiles_list, rdkit_mol_objs, labels = \
                 _load_odour_dataset(self.raw_paths[0])
             for i in range(len(smiles_list)):
-                print(i)
+                #print(i)
                 rdkit_mol = rdkit_mol_objs[i]
                 # # convert aromatic bonds to double bonds
                 # Chem.SanitizeMol(rdkit_mol,
@@ -1183,7 +1183,7 @@ def _load_odour_dataset(input_path):
         print('sum of row values in dataset creator: ', sum(row_values))
         if sum(row_values) == 0:
             print("Missing labels for sample")
-
+    print('labels.values: ', labels.values)
     assert len(smiles_list) == len(rdkit_mol_objs_list)
     assert len(smiles_list) == len(labels)
     return smiles_list, rdkit_mol_objs_list, labels.values
