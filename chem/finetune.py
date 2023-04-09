@@ -348,10 +348,23 @@ def train_epoch(args, model, device, loader, optimizer, weights_regularization, 
 
             # intermediate_output_s
 
-        print('prediction: ', pred.tolist())
+        print('prediction: ')
+        for p in pred.tolist():
+            plist = []
+            for idx, po in enumerate(p):
+                if po>0.5:
+                    plist.append(odours[idx])
+            print(plist)
 
         y = batch.y.view(pred.shape).to(torch.float64)
-        print('gt: ', ((y + 1) / 2).tolist())
+        print('gt: ')
+        for p in ((y + 1) / 2).tolist():
+            plist = []
+            for idx, po in enumerate(p):
+                if po>0.5:
+                    plist.append(odours[idx])
+            print(plist)
+
         # Whether y is non-null or not.
         is_valid = y ** 2 > 0
         # Loss matrix
