@@ -405,7 +405,11 @@ def main(args):
     train_loader = DataLoader(train_dataset, batch_size=args.batch_size, shuffle=shuffle, num_workers=args.num_workers)
     for b in train_loader:
         print('train loader: ', b.x)
-        print(b.y)
+        print('sum_of_labels: ', torch.sum(b.y))
+        print('each y: ')
+        for val in b.y.tolist():
+            print(val)
+
     val_loader = DataLoader(valid_dataset, batch_size=args.batch_size, shuffle=False, num_workers=args.num_workers)
     test_loader = DataLoader(test_dataset, batch_size=args.batch_size, shuffle=False, num_workers=args.num_workers)
 
