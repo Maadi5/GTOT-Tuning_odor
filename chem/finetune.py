@@ -436,6 +436,9 @@ def train_epoch(args, model, device, loader, optimizer, weights_regularization, 
         pass
 
     metric = np.mean(meter.compute_metric('roc_auc_score_finetune'))
+
+    # pr_recall = precision_recall(preds=torch.tensor(pred_all), target=torch.tensor(labels_all), average='macro',
+    #                              mdmc_average=None, ignore_index=None,num_classes=num_classes, threshold=0.5, top_k=None, multiclass=None)
     return metric, avg_loss, all_o_preds, all_o_gt
 
 
@@ -461,9 +464,28 @@ def eval(args, model, device, loader):
 
             cls_loss = torch.sum(loss_mat) / torch.sum(is_valid)
             loss_sum.append(cls_loss.item())
+            #print('prediction: ')
+            all_o_preds = []
+            for p in pred.tolist():
+                plist = []
+                for idx, po in enumerate(p):
+                    if po>0.5:
+                        plist.append(odours[idx])
+                all_o_preds.append(plist)
+
+            # print('gt: ')
+            all_o_gt = []
+            for p in ((y + 1) / 2).tolist():
+                plist = []
+                for idx, po in enumerate(p):
+                    if po>0.5:
+                        plist.append(odours[idx])
+                all_o_gt.append(plist)
+
 
     metric = np.mean(eval_meter.compute_metric('roc_auc_score_finetune'))
-    return metric, sum(loss_sum) / len(loss_sum)
+
+    return metric, sum(loss_sum) / len(loss_sum), all_o_preds, all_o_gt
 
 
 def Inference(args, model, device, loader, source_getter, target_getter, plot_confusion_mat=False):
@@ -714,18 +736,19 @@ def main(args):
                                                              scheduler=None,
                                                              epoch=epoch)
 
-        print('preds: ')
-        print(all_o_preds)
-        print('gt: ')
-        print(all_o_gt)
         training_time.epoch_end()
 
         print("====Evaluation")
 
-        val_acc, val_loss = eval(args, model, device, val_loader)
+        val_acc, val_loss, all_o_preds_val ,all_o_gt_val = eval(args, model, device, val_loader)
         test_time.epoch_start()
-        test_acc, test_loss = eval(args, model, device, test_loader)
+        test_acc, test_loss, all_o_preds_test ,all_o_gt_test = eval(args, model, device, test_loader)
         test_time.epoch_end()
+
+        print('preds_test: ')
+        print(all_o_preds_test)
+        print('gt_test: ')
+        print(all_o_gt_test)
         try:
             scheduler.step(-val_acc)
         except:
