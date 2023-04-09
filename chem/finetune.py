@@ -404,26 +404,25 @@ def train_epoch(args, model, device, loader, optimizer, weights_regularization, 
         optimizer.step()
 
         loss_epoch.append(cls_loss.item())
-        if step%args.batch_size == 0:
-            print('prediction: ')
-            all_o = []
-            for p in pred.tolist():
-                plist = []
-                for idx, po in enumerate(p):
-                    if po>0.5:
-                        plist.append(odours[idx])
-                all_o.append(plist)
-            print(all_o)
 
-            print('gt: ')
-            all_o = []
-            for p in ((y + 1) / 2).tolist():
-                plist = []
-                for idx, po in enumerate(p):
-                    if po>0.5:
-                        plist.append(odours[idx])
-                all_o.append(plist)
-            print(all_o)
+        #print('prediction: ')
+        all_o_preds = []
+        for p in pred.tolist():
+            plist = []
+            for idx, po in enumerate(p):
+                if po>0.5:
+                    plist.append(odours[idx])
+            all_o_preds.append(plist)
+
+        print('gt: ')
+        all_o_gt = []
+        for p in ((y + 1) / 2).tolist():
+            plist = []
+            for idx, po in enumerate(p):
+                if po>0.5:
+                    plist.append(odours[idx])
+            all_o_gt.append(plist)
+
     avg_loss = sum(loss_epoch) / len(loss_epoch)
 
     if scheduler is not None: scheduler.step()
@@ -437,7 +436,7 @@ def train_epoch(args, model, device, loader, optimizer, weights_regularization, 
         pass
 
     metric = np.mean(meter.compute_metric('roc_auc_score_finetune'))
-    return metric, avg_loss
+    return metric, avg_loss, all_o_preds, all_o_gt
 
 
 def eval(args, model, device, loader):
@@ -707,13 +706,18 @@ def main(args):
 
         print("====epoch " + str(epoch), " lr: ", optimizer.param_groups[-1]['lr'])
         training_time.epoch_start()
-        train_acc, train_loss = train_epoch(args, model, device, train_loader, optimizer,
+        train_acc, train_loss, all_o_preds, all_o_gt = train_epoch(args, model, device, train_loader, optimizer,
                                                              weights_regularization,
                                                              backbone_regularization,
                                                              head_regularization, target_getter,
                                                              source_getter, bss_regularization,
                                                              scheduler=None,
                                                              epoch=epoch)
+
+        print('preds: ')
+        print(all_o_preds)
+        print('gt: ')
+        print(all_o_gt)
         training_time.epoch_end()
 
         print("====Evaluation")
