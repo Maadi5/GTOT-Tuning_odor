@@ -1180,10 +1180,12 @@ def _load_odour_dataset(input_path):
     labels = labels.fillna(0)
     for idx, row in labels.iterrows():
         row_values = [v for k, v in dict(row).items()]
-        print('sum of row values in dataset creator: ', sum(row_values))
+        #print('sum of row values in dataset creator: ', sum(row_values))
         if sum(row_values) == 0:
             print("Missing labels for sample")
-    print('labels.values: ', labels.values)
+    for ar in labels.values:
+        print(ar)
+        print(len(ar))
     assert len(smiles_list) == len(rdkit_mol_objs_list)
     assert len(smiles_list) == len(labels)
     return smiles_list, rdkit_mol_objs_list, labels.values
