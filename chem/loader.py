@@ -613,6 +613,8 @@ class MoleculeDataset(InMemoryDataset):
                     [i])  # id here is the index of the mol in
                 # the dataset
                 data.y = torch.tensor(labels[i, :])
+                if torch.sum(data.y)==0:
+                    print('sum 0 data: ', data.id)
                 data_list.append(data)
                 data_smiles_list.append(smiles_list[i])
 
@@ -1172,7 +1174,7 @@ def _load_odour_dataset(input_path):
     input_df = pd.read_csv(input_path, index_col=False)
     smiles_list = input_df['smiles']
     rdkit_mol_objs_list = [AllChem.MolFromSmiles(s) for s in smiles_list]
-    tasks = list(input_df.columns[1:])
+    tasks = list(input_df.columns[:-2])
     labels = input_df[tasks]
     # convert 0 to 1
     labels = labels.replace(0, 1)
