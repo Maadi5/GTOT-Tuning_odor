@@ -341,7 +341,7 @@ def main(args):
     if args.dataset == "tox21":
         num_tasks = 12
     elif args.dataset == "odour":
-        num_tasks = 162
+        num_tasks = 133
     elif args.dataset == "hiv":
         num_tasks = 1
     elif args.dataset == "pcba":
