@@ -295,7 +295,7 @@ class MoleculeDataset(InMemoryDataset):
     def get(self, idx):
         data = Data()
         for key in self.data.keys:
-            item, slices = self.data[key], self.slices[key]
+            item, slices = self.dataself.data[key], self.slices[key]
             s = list(repeat(slice(None), item.dim()))
             try:
                 s[data.__cat_dim__(key, item)] = slice(slices[idx],
@@ -613,6 +613,7 @@ class MoleculeDataset(InMemoryDataset):
                     [i])  # id here is the index of the mol in
                 # the dataset
                 data.y = torch.tensor(labels[i, :])
+                print('sum of data: ', torch.sum(data.y))
                 if torch.sum(data.y)==0:
                     print('sum 0 data: ', data.id)
                 data_list.append(data)
@@ -763,6 +764,7 @@ class MoleculeDataset(InMemoryDataset):
                                   header=False)
 
         data, slices = self.collate(data_list)
+        print('data_list collated: ', data.x, data.y)
         torch.save((data, slices), self.processed_paths[0])
 
 # NB: only properly tested when dataset_1 is chembl_with_labels and dataset_2
@@ -1397,7 +1399,7 @@ def create_all_datasets():
         dataset = MoleculeDataset(root, dataset=dataset_name)
         print(dataset)
 
-    dataset = MoleculeDataset(root= r"C:\Odour Datasets\non_odour_chem_datasets\dataset\odour", dataset="odour")
+    #dataset = MoleculeDataset(root= r"C:\Odour Datasets\non_odour_chem_datasets\dataset\odour", dataset="odour")
     # dataset = MoleculeDataset(root = "dataset/chembl_filtered", dataset="chembl_filtered")
     # print(dataset)
     # dataset = MoleculeDataset(root = "dataset/zinc_standard_agent", dataset="zinc_standard_agent")
