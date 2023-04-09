@@ -404,7 +404,7 @@ def train_epoch(args, model, device, loader, optimizer, weights_regularization, 
         optimizer.step()
 
         loss_epoch.append(cls_loss.item())
-        if step%32 == 0:
+        if step%args.batch_size == 0:
             print('prediction: ')
             all_o = []
             for p in pred.tolist():
