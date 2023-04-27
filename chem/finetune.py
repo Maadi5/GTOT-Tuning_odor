@@ -550,6 +550,10 @@ def main(args):
 
     print(dataset)
     train_val_test = [0.8, 0.1, 0.1]
+    smiles_list = pd.read_csv(os.path.join(args.data_path, args.dataset, 'processed/smiles.csv'), header=None)[
+        0].tolist()
+    ds_df = pd.read_csv(os.path.join(args.data_path, args.dataset, 'raw/odour.csv'), index_col=False)
+    print('odors: ', ds_df.columns)
     if args.split == "scaffold":
 
         smiles_list = pd.read_csv(os.path.join(args.data_path, args.dataset, 'processed/smiles.csv'), header=None)[
