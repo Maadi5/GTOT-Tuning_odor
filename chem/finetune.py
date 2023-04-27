@@ -1,6 +1,6 @@
 from loader import MoleculeDataset
 from torch_geometric.data import DataLoader
-from sklearn.metrics import confusion_matrix, plot_confusion_matrix
+from sklearn.metrics import confusion_matrix #, plot_confusion_matrix
 from torchmetrics.functional import precision_recall
 
 import math
