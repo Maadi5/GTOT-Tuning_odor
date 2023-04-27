@@ -763,7 +763,7 @@ def main(args):
         pr_recall = precision_recall(preds= torch.tensor(all_o_preds_test), target= torch.tensor(all_o_gt_test), average='macro', mdmc_average=None, ignore_index=None,
                                     num_classes=133, threshold=0.5, top_k=None, multiclass=None)
 
-        print(confusion)
+        # print(confusion)
         print(pr_recall)
         try:
             scheduler.step(-val_acc)
