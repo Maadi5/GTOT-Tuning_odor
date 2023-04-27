@@ -472,7 +472,7 @@ def eval(args, model, device, loader):
                 plist = []
                 for idx, po in enumerate(p):
                     if po>0.5:
-                        plist.append(odours[idx])
+                        plist.append(idx) #(odours[idx])
                 all_o_preds.append(plist)
 
             # print('gt: ')
@@ -481,7 +481,7 @@ def eval(args, model, device, loader):
                 plist = []
                 for idx, po in enumerate(p):
                     if po>0.5:
-                        plist.append(odours[idx])
+                        plist.append(idx) #odours[idx])
                 all_o_gt.append(plist)
 
 
