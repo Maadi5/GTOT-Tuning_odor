@@ -553,7 +553,9 @@ def main(args):
     smiles_list = pd.read_csv(os.path.join(args.data_path, args.dataset, 'processed/smiles.csv'), header=None)[
         0].tolist()
     ds_df = pd.read_csv(os.path.join(args.data_path, args.dataset, 'raw/odour.csv'), index_col=False)
-    print('odors: ', ds_df.columns)
+    labels_all = list(ds_df.columns)[:-2]
+    print('odors: ', labels_all)
+    print('len labels: ', labels_all)
     if args.split == "scaffold":
 
         smiles_list = pd.read_csv(os.path.join(args.data_path, args.dataset, 'processed/smiles.csv'), header=None)[
@@ -755,9 +757,9 @@ def main(args):
         # print(all_o_preds_test)
         # print('gt_test: ')
         # print(all_o_gt_test)
-        confusion = confusion_matrix(labels_all, pred_all)
-        pr_recall = precision_recall(preds= torch.tensor(pred_all), target= torch.tensor(labels_all), average='macro', mdmc_average=None, ignore_index=None,
-                                    num_classes=num_classes, threshold=0.5, top_k=None, multiclass=None)
+        confusion = confusion_matrix(all_o_gt_test, all_o_preds_test)
+        pr_recall = precision_recall(preds= torch.tensor(all_o_preds_test), target= torch.tensor(all_o_gt_test), average='macro', mdmc_average=None, ignore_index=None,
+                                    num_classes=133, threshold=0.5, top_k=None, multiclass=None)
 
         print(confusion)
         print(pr_recall)
