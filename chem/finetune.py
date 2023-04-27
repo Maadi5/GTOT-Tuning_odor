@@ -1,5 +1,7 @@
 from loader import MoleculeDataset
 from torch_geometric.data import DataLoader
+from sklearn.metrics import confusion_matrix, plot_confusion_matrix
+from torchmetrics.functional import precision_recall
 
 import math
 import torch.nn.functional as F
@@ -745,10 +747,16 @@ def main(args):
         test_acc, test_loss, all_o_preds_test ,all_o_gt_test = eval(args, model, device, test_loader)
         test_time.epoch_end()
 
-        print('preds_test: ')
-        print(all_o_preds_test)
-        print('gt_test: ')
-        print(all_o_gt_test)
+        # print('preds_test: ')
+        # print(all_o_preds_test)
+        # print('gt_test: ')
+        # print(all_o_gt_test)
+        confusion = confusion_matrix(labels_all, pred_all)
+        pr_recall = precision_recall(preds= torch.tensor(pred_all), target= torch.tensor(labels_all), average='macro', mdmc_average=None, ignore_index=None,
+                                    num_classes=num_classes, threshold=0.5, top_k=None, multiclass=None)
+
+        print(confusion)
+        print(pr_recall)
         try:
             scheduler.step(-val_acc)
         except:
