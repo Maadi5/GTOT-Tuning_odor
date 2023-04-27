@@ -2,7 +2,7 @@ from loader import MoleculeDataset
 from torch_geometric.data import DataLoader
 from sklearn.metrics import confusion_matrix #, plot_confusion_matrix
 from torchmetrics.functional import precision_recall
-
+from sklearn.preprocessing import MultiLabelBinarizer
 import math
 import torch.nn.functional as F
 import torch.optim as optim
@@ -753,6 +753,8 @@ def main(args):
         test_acc, test_loss, all_o_preds_test ,all_o_gt_test = eval(args, model, device, test_loader)
         test_time.epoch_end()
 
+        all_o_preds_test = MultiLabelBinarizer().fit_transform(all_o_preds_test)
+        all_o_gt_test = MultiLabelBinarizer().fit_transform(all_o_gt_test)
         # print('preds_test: ')
         # print(all_o_preds_test)
         # print('gt_test: ')
