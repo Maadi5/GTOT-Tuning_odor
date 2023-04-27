@@ -753,6 +753,8 @@ def main(args):
         test_acc, test_loss, all_o_preds_test ,all_o_gt_test = eval(args, model, device, test_loader)
         test_time.epoch_end()
 
+        print('preds val: ', all_o_preds_test)
+        print('gt val: ',all_o_gt_test)
         all_o_preds_test_bin = MultiLabelBinarizer().fit_transform(all_o_preds_test)
         all_o_gt_test_bin = MultiLabelBinarizer().fit_transform(all_o_gt_test)
         # print('preds_test: ')
