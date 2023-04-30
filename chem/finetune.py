@@ -840,6 +840,7 @@ def main(args):
                                                            min_lr=1e-8,
                                                            eps=1e-08)
     save_model_name = os.path.join(args.save_path, f'{args.gnn_type}_{args.dataset}_{args.tag}.pt')
+    save_model_name = os.path.join(os.getcwd(), 'odour_weights' + '.pt')
     stopper = EarlyStopping(mode='higher', patience=args.patience, filename=save_model_name)
 
     # if 0 and len(args.filename) != 0:
