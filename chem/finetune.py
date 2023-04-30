@@ -51,6 +51,42 @@ def get_confusion_matrix(y_true, y_pred, num_classes):
     return cm_norm
 
 
+def plot_confusion_matrix(y_true, y_pred, class_names):
+    num_classes = len(class_names)
+
+    # Convert one-hot encoded predictions to label indices
+    y_pred_labels = tf.argmax(y_pred, axis=-1)
+
+    # Compute confusion matrix
+    cm = tf.math.confusion_matrix(y_true, y_pred_labels, num_classes=num_classes)
+
+    # Plot confusion matrix
+    fig, ax = plt.subplots(figsize=(15, 15))
+    im = ax.imshow(cm, interpolation='nearest', cmap=plt.cm.Blues)
+    ax.figure.colorbar(im, ax=ax)
+    ax.set(xticks=np.arange(cm.shape[1]),
+           yticks=np.arange(cm.shape[0]),
+           xticklabels=class_names,
+           yticklabels=class_names,
+           ylabel="True label",
+           xlabel="Predicted label")
+    fmt = 'd'
+    thresh = cm.max() / 2.
+    for i in range(cm.shape[0]):
+        for j in range(cm.shape[1]):
+            ax.text(j, i, format(cm[i, j], fmt),
+                    ha="center", va="center",
+                    color="white" if cm[i, j] > thresh else "black")
+    fig.tight_layout()
+
+    # Add the confusion matrix as an image summary to TensorBoard
+    summary = tf.Summary()
+    summary_image = tf.Summary.Image(
+        tensor=tf.expand_dims(cm, axis=-1).astype(np.float32),
+        colormap=11)  # 11 corresponds to the 'Blues' color map
+    summary.value.add(tag='Confusion_Matrix', image=summary_image)
+    writer.add_summary(summary)
+    writer.flush()
 # Define a function to log the confusion matrix to TensorBoard
 def log_confusion_matrix(writer, cm, step):
     # Create a figure and plot the confusion matrix
@@ -847,8 +883,9 @@ def main(args):
             # pr_recall = precision_recall(preds= torch.tensor(all_o_preds_test), target= torch.tensor(all_o_gt_test), average='macro', mdmc_average=None, ignore_index=None,
             #                             num_classes=133, threshold=0.5, top_k=None, multiclass=None)
         # get_metrics_2(y_true=all_o_gt_test, y_pred=all_o_preds_test)
-        cm = get_confusion_matrix(y_true= all_o_gt_test, y_pred=all_o_preds_test, num_classes=133)
-        log_confusion_matrix(writer, cm, step=i)
+        #cm = get_confusion_matrix(y_true= all_o_gt_test, y_pred=all_o_preds_test, num_classes=133)
+        #log_confusion_matrix(writer, cm, step=i)
+        plot_confusion_matrix(y_true= all_o_gt_test, y_pred=all_o_preds_test, class_names=odours)
         # print(confusion)
         #print(pr_recall)
         try:
