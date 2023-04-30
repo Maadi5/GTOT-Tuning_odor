@@ -885,6 +885,7 @@ def main(args):
         # get_metrics_2(y_true=all_o_gt_test, y_pred=all_o_preds_test)
         #cm = get_confusion_matrix(y_true= all_o_gt_test, y_pred=all_o_preds_test, num_classes=133)
         #log_confusion_matrix(writer, cm, step=i)
+        print(len(all_o_gt_test[0]), len(all_o_preds_test[0]))
         plot_confusion_matrix(y_true= all_o_gt_test, y_pred=all_o_preds_test, class_names=odours)
         # print(confusion)
         #print(pr_recall)
