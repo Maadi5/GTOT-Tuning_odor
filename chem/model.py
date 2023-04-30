@@ -6,6 +6,9 @@ from torch_geometric.nn import global_add_pool, global_mean_pool, global_max_poo
 import torch.nn.functional as F
 from torch_scatter import scatter_add
 from torch_geometric.nn.inits import glorot, zeros
+from sklearn.metrics import multilabel_confusion_matrix
+from sklearn.metrics import precision_score, recall_score
+
 
 num_atom_type = 120  # including the extra mask tokens
 num_chirality_tag = 3
@@ -13,6 +16,22 @@ num_chirality_tag = 3
 num_bond_type = 6  # including aromatic and self-loop edge, and extra masked tokens
 num_bond_direction = 3
 
+
+def get_metrics(y_true, y_pred):
+    # Compute confusion matrix
+    cm = multilabel_confusion_matrix(y_true, y_pred)
+
+    # Compute precision and recall
+    precision = precision_score(y_true, y_pred, average='micro')
+    recall = recall_score(y_true, y_pred, average='micro')
+
+    # Print metrics
+    print(f"Precision: {precision:.3f}")
+    print(f"Recall: {recall:.3f}")
+    print("Confusion Matrix:")
+    for i, cm_i in enumerate(cm):
+        print(f"Label {i}:")
+        print(cm_i)
 
 class GINConv(MessagePassing):
     """

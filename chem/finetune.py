@@ -10,7 +10,6 @@ import torch.optim as optim
 from tqdm import tqdm
 import numpy as np
 
-
 from model import GNN_graphpred
 
 from splitters import scaffold_split, random_split, random_scaffold_split
@@ -30,6 +29,9 @@ from ftlib.finetune.stochnorm import convert_model
 from ftlib.finetune.bss import BatchSpectralShrinkage
 from ftlib.finetune.delta import IntermediateLayerGetter, L2Regularization, get_attribute
 from ftlib.finetune.delta import SPRegularization, FrobeniusRegularization
+
+from sklearn.metrics import multilabel_confusion_matrix
+from sklearn.metrics import precision_score, recall_score
 
 
 odours = ['melon',
@@ -171,6 +173,22 @@ criterion = nn.BCEWithLogitsLoss(reduction="none")
 import warnings
 warnings.filterwarnings('ignore')
 
+def get_metrics(y_true, y_pred):
+    # Compute confusion matrix
+    cm = multilabel_confusion_matrix(y_true, y_pred)
+
+    # Compute precision and recall
+    precision = precision_score(y_true, y_pred, average='micro')
+    recall = recall_score(y_true, y_pred, average='micro')
+
+    # Print metrics
+    print(f"Precision: {precision:.3f}")
+    print(f"Recall: {recall:.3f}")
+    print("Confusion Matrix:")
+    for i, cm_i in enumerate(cm):
+        print(f"Label {i}:")
+        print(cm_i)
+
 def setup_seed(seed):
     torch.manual_seed(seed)
     torch.cuda.manual_seed_all(seed)
@@ -180,7 +198,6 @@ def setup_seed(seed):
     ## cuda
     # torch.cuda.current_device()
     torch.cuda._initialized = True
-
 
 def calculate_channel_attention(dataset, return_layers, args):
     device = args.device
@@ -768,11 +785,11 @@ def main(args):
         # print('gt_test: ')
         # print(all_o_gt_test)
         # confusion = confusion_matrix(all_o_gt_test, all_o_preds_test)
-        pr_recall = precision_recall(preds= torch.tensor(all_o_preds_test), target= torch.tensor(all_o_gt_test), average='macro', mdmc_average=None, ignore_index=None,
-                                    num_classes=133, threshold=0.5, top_k=None, multiclass=None, mdmc_reduce='global')
-
+            # pr_recall = precision_recall(preds= torch.tensor(all_o_preds_test), target= torch.tensor(all_o_gt_test), average='macro', mdmc_average=None, ignore_index=None,
+            #                             num_classes=133, threshold=0.5, top_k=None, multiclass=None)
+        get_metrics(y_true=all_o_gt_test, y_pred=all_o_preds_test)
         # print(confusion)
-        print(pr_recall)
+        #print(pr_recall)
         try:
             scheduler.step(-val_acc)
         except:
