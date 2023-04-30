@@ -32,11 +32,47 @@ from ftlib.finetune.delta import SPRegularization, FrobeniusRegularization
 
 from sklearn.metrics import multilabel_confusion_matrix
 from sklearn.metrics import precision_score, recall_score
-
+import tensorflow as tf
 
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
+
+
+def get_confusion_matrix(y_true, y_pred, num_classes):
+    # Compute the confusion matrix
+    cm = tf.math.confusion_matrix(y_true, y_pred, num_classes=num_classes)
+
+    # Normalize the confusion matrix
+    cm = tf.cast(cm, tf.float32)
+    row_sums = tf.reduce_sum(cm, axis=1)
+    cm_norm = cm / row_sums[:, tf.newaxis]
+
+    return cm_norm
+
+
+# Define a function to log the confusion matrix to TensorBoard
+def log_confusion_matrix(writer, cm, step):
+    # Create a figure and plot the confusion matrix
+    fig, ax = plt.subplots(figsize=(10, 10))
+    sns.heatmap(cm, annot=True, cmap='Blues', fmt='.2f', ax=ax)
+    plt.xlabel('Predicted label')
+    plt.ylabel('True label')
+    plt.title('Confusion Matrix')
+
+    # Convert the plot to an image and log it to TensorBoard
+    buf = io.BytesIO()
+    plt.savefig(buf, format='png')
+    buf.seek(0)
+    image = tf.image.decode_png(buf.getvalue(), channels=4)
+    image = tf.expand_dims(image, 0)
+    summary = tf.summary.image('Confusion Matrix', image, step=step)
+    writer.add_summary(summary)
+    buf.close()
+    plt.close()
+
+logdir = "logs/"
+writer = tf.summary.create_file_writer(logdir)
 
 def get_metrics_2(y_true, y_pred):
     # Compute confusion matrix
@@ -810,7 +846,9 @@ def main(args):
         # confusion = confusion_matrix(all_o_gt_test, all_o_preds_test)
             # pr_recall = precision_recall(preds= torch.tensor(all_o_preds_test), target= torch.tensor(all_o_gt_test), average='macro', mdmc_average=None, ignore_index=None,
             #                             num_classes=133, threshold=0.5, top_k=None, multiclass=None)
-        get_metrics_2(y_true=all_o_gt_test, y_pred=all_o_preds_test)
+        # get_metrics_2(y_true=all_o_gt_test, y_pred=all_o_preds_test)
+        cm = get_confusion_matrix(y_val= all_o_gt_test, y_pred=all_o_preds_test, num_classes=133)
+        log_confusion_matrix(writer, cm, step=i)
         # print(confusion)
         #print(pr_recall)
         try:
