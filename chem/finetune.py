@@ -41,6 +41,7 @@ import seaborn as sns
 def get_metrics_2(y_true, y_pred):
     # Compute confusion matrix
     cm = multilabel_confusion_matrix(y_true, y_pred)
+    cm = np.array([c[1] for c in cm])
 
     # Compute precision and recall
     precision = precision_score(y_true, y_pred, average='micro')
