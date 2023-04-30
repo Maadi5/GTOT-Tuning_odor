@@ -933,6 +933,7 @@ def main(args):
             writer.add_scalar('data/test loss', test_loss, epoch)
 
         if stopper.step(val_acc, model, test_score=test_acc, IsMaster=args.debug):
+            print('stopper.step happening')
             stopper.report_final_results(i_epoch=epoch)
             break
         stopper.print_best_results(i_epoch=epoch, val_cls_loss=val_loss, train_acc=train_acc, val_score=val_acc,
