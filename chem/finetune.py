@@ -906,7 +906,7 @@ def main(args):
             with train_summary_writer.as_default():
                 tf.summary.scalar('precision', precision.result(), step=i)
                 tf.summary.scalar('recall', recall.result(), step=i)
-                tf.summary.tensor('confusion_matrix', cm, step=i, description='Confusion matrix')
+                tf.summary.image('confusion_matrix', cm, step=i, description='Confusion matrix')
 
             # Reset the metrics for the next batch
             precision.reset_states()
