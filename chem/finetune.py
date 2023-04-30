@@ -918,10 +918,10 @@ def main(args):
         precision.reset_states()
         recall.reset_states()
 
-    try:
-        scheduler.step(-val_acc)
-    except:
-        scheduler.step()
+        try:
+            scheduler.step(-val_acc)
+        except:
+            scheduler.step()
 
         if args.filename not in ['', "", 'none']:
             writer.add_scalar('data/train auc', train_acc, epoch)
