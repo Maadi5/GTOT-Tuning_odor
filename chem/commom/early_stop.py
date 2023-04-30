@@ -196,6 +196,7 @@ class EarlyStopping(object):
         #                  'device', 'batch_size', 'data_path', 'reload']
         # for k in non_load_keys:
         #     del args2[k]
+        print('SAVING MODEL AT: ', self.filename)
         torch.save({'model_state_dict': model.state_dict(), 'args': args2}, self.filename)
 
     def load_checkpoint(self, model):
