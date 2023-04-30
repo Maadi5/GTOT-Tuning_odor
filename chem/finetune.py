@@ -471,8 +471,11 @@ def eval(args, model, device, loader):
             for p in pred.tolist():
                 plist = []
                 for idx, po in enumerate(p):
-                    if po>0.5:
-                        plist.append(idx) #(odours[idx])
+                    if po>=0.5:
+                        #plist.append(idx) #(odours[idx])
+                        plist.append(1)
+                    else:
+                        plist.append(0)
                 all_o_preds.append(plist)
 
             # print('gt: ')
@@ -480,8 +483,11 @@ def eval(args, model, device, loader):
             for p in ((y + 1) / 2).tolist():
                 plist = []
                 for idx, po in enumerate(p):
-                    if po>0.5:
-                        plist.append(idx) #odours[idx])
+                    if po>=0.5:
+                        #plist.append(idx) #odours[idx])
+                        plist.append(1)
+                    else:
+                        plist.append(0)
                 all_o_gt.append(plist)
 
 
