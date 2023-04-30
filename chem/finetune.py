@@ -896,7 +896,7 @@ def main(args):
         # print(confusion)
         #print(pr_recall)
         # Update the metrics
-        for i in len(all_o_preds_test):
+        for i in range((all_o_preds_test)):
             precision.update_state(all_o_gt_test[i], all_o_preds_test[i])
             recall.update_state(all_o_gt_test[i], all_o_preds_test[i])
             # Calculate the confusion matrix
