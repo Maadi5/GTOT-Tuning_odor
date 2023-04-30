@@ -31,13 +31,23 @@ from ftlib.finetune.delta import IntermediateLayerGetter, L2Regularization, get_
 from ftlib.finetune.delta import SPRegularization, FrobeniusRegularization
 
 from sklearn.metrics import multilabel_confusion_matrix
-from sklearn.metrics import precision_score, recall_score
+from sklearn.metrics import precision_score, recall_score, confusion_matrix
 import tensorflow as tf
+from tensorboard.plugins import pr_curve
 
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 
+num_labels = 133
+
+# Define the metrics
+precision = tf.metrics.Precision()
+recall = tf.metrics.Recall()
+
+# Define the Tensorboard summary writers
+train_summary_writer = tf.summary.create_file_writer('./logs/train')
+val_summary_writer = tf.summary.create_file_writer('./logs/val')
 
 def get_confusion_matrix(y_true, y_pred, num_classes):
     # Compute the confusion matrix
@@ -883,12 +893,25 @@ def main(args):
             # pr_recall = precision_recall(preds= torch.tensor(all_o_preds_test), target= torch.tensor(all_o_gt_test), average='macro', mdmc_average=None, ignore_index=None,
             #                             num_classes=133, threshold=0.5, top_k=None, multiclass=None)
         # get_metrics_2(y_true=all_o_gt_test, y_pred=all_o_preds_test)
-        #cm = get_confusion_matrix(y_true= all_o_gt_test, y_pred=all_o_preds_test, num_classes=133)
-        #log_confusion_matrix(writer, cm, step=i)
-        print(len(all_o_gt_test[0]), len(all_o_preds_test[0]))
-        plot_confusion_matrix(y_true= all_o_gt_test, y_pred=all_o_preds_test, class_names=odours)
         # print(confusion)
         #print(pr_recall)
+        # Update the metrics
+        for i in len(all_o_preds_test):
+            precision.update_state(all_o_gt_test[i], all_o_preds_test[i])
+            recall.update_state(all_o_gt_test[i], all_o_preds_test[i])
+            # Calculate the confusion matrix
+            cm = confusion_matrix(all_o_gt_test[i], all_o_preds_test[i])
+
+            # Log the metrics and confusion matrix to Tensorboard
+            with train_summary_writer.as_default():
+                tf.summary.scalar('precision', precision.result(), step=i)
+                tf.summary.scalar('recall', recall.result(), step=i)
+                tf.summary.tensor('confusion_matrix', cm, step=i, description='Confusion matrix')
+
+            # Reset the metrics for the next batch
+            precision.reset_states()
+            recall.reset_states()
+
         try:
             scheduler.step(-val_acc)
         except:
