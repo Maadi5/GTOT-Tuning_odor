@@ -847,7 +847,7 @@ def main(args):
             # pr_recall = precision_recall(preds= torch.tensor(all_o_preds_test), target= torch.tensor(all_o_gt_test), average='macro', mdmc_average=None, ignore_index=None,
             #                             num_classes=133, threshold=0.5, top_k=None, multiclass=None)
         # get_metrics_2(y_true=all_o_gt_test, y_pred=all_o_preds_test)
-        cm = get_confusion_matrix(y_val= all_o_gt_test, y_pred=all_o_preds_test, num_classes=133)
+        cm = get_confusion_matrix(y_true= all_o_gt_test, y_pred=all_o_preds_test, num_classes=133)
         log_confusion_matrix(writer, cm, step=i)
         # print(confusion)
         #print(pr_recall)
