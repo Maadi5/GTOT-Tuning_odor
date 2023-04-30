@@ -898,10 +898,10 @@ def main(args):
         # Update the metrics
         for i in range(len(all_o_preds_test)):
             # Check if y_true[i] or y_pred[i] has only one element
+            print('all_gt_i: ', all_o_gt_test[i])
             if len(np.unique(np.argmax(all_o_gt_test[i], axis=-1))) == 1 or len(np.unique(np.argmax(all_o_preds_test[i], axis=-1))) == 1:
                 continue
             print('COMING TO PREVISION RECALL CODE...')
-            print('all_gt_i: ', all_o_gt_test[i])
             precision.update_state(all_o_gt_test[i], all_o_preds_test[i])
             recall.update_state(all_o_gt_test[i], all_o_preds_test[i])
 
