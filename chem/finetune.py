@@ -898,7 +898,7 @@ def main(args):
         # Update the metrics
         #for i in range(len(all_o_preds_test)):
         # Check if y_true[i] or y_pred[i] has only one element
-        print('all_gt_i: ', all_o_gt_test[i])
+        # print('all_gt_i: ', all_o_gt_test[i])
         # if len(np.unique(np.argmax(all_o_gt_test[i], axis=-1))) == 1 or len(np.unique(np.argmax(all_o_preds_test[i], axis=-1))) == 1:
         #     continue
         print('COMING TO PREVISION RECALL CODE...')
@@ -910,9 +910,9 @@ def main(args):
 
         # Log the metrics and confusion matrix to Tensorboard
         with train_summary_writer.as_default():
-            tf.summary.scalar('precision', precision.result(), step=i)
-            tf.summary.scalar('recall', recall.result(), step=i)
-            tf.summary.text('confusion_matrix', np.array2string(cm), step=i)
+            tf.summary.scalar('precision', precision.result(), step=epoch)
+            tf.summary.scalar('recall', recall.result(), step=epoch)
+            tf.summary.text('confusion_matrix', np.array2string(cm), step=epoch)
 
         # Reset the metrics for the next batch
         precision.reset_states()
