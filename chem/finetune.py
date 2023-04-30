@@ -899,14 +899,15 @@ def main(args):
         for i in range(len(all_o_preds_test)):
             precision.update_state(all_o_gt_test[i], all_o_preds_test[i])
             recall.update_state(all_o_gt_test[i], all_o_preds_test[i])
+
             # Calculate the confusion matrix
-            cm = confusion_matrix(all_o_gt_test[i], all_o_preds_test[i])
+            cm = confusion_matrix(np.argmax(all_o_gt_test[i], axis=-1), np.argmax(all_o_preds_test[i], axis=-1))
 
             # Log the metrics and confusion matrix to Tensorboard
             with train_summary_writer.as_default():
                 tf.summary.scalar('precision', precision.result(), step=i)
                 tf.summary.scalar('recall', recall.result(), step=i)
-                tf.summary.scalar('confusion_matrix', np.array2string(cm), step=i, description='Confusion matrix')
+                tf.summary.text('confusion_matrix', np.array2string(cm), step=i)
 
             # Reset the metrics for the next batch
             precision.reset_states()
