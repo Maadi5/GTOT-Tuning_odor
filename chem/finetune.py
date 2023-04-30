@@ -34,6 +34,28 @@ from sklearn.metrics import multilabel_confusion_matrix
 from sklearn.metrics import precision_score, recall_score
 
 
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+def get_metrics_2(y_true, y_pred):
+    # Compute confusion matrix
+    cm = multilabel_confusion_matrix(y_true, y_pred)
+
+    # Compute precision and recall
+    precision = precision_score(y_true, y_pred, average='micro')
+    recall = recall_score(y_true, y_pred, average='micro')
+
+    # Plot confusion matrix
+    fig, ax = plt.subplots(figsize=(10, 10))
+    ax.set_title('Confusion Matrix')
+    sns.heatmap(cm, annot=True, cmap='Blues', fmt='d', ax=ax)
+
+    # Print metrics
+    print(f"Precision: {precision:.3f}")
+    print(f"Recall: {recall:.3f}")
+    plt.show()
+
 odours = ['melon',
  'aldehydic',
  'alcoholic',
@@ -787,7 +809,7 @@ def main(args):
         # confusion = confusion_matrix(all_o_gt_test, all_o_preds_test)
             # pr_recall = precision_recall(preds= torch.tensor(all_o_preds_test), target= torch.tensor(all_o_gt_test), average='macro', mdmc_average=None, ignore_index=None,
             #                             num_classes=133, threshold=0.5, top_k=None, multiclass=None)
-        get_metrics(y_true=all_o_gt_test, y_pred=all_o_preds_test)
+        get_metrics_2(y_true=all_o_gt_test, y_pred=all_o_preds_test)
         # print(confusion)
         #print(pr_recall)
         try:
