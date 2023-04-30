@@ -896,32 +896,32 @@ def main(args):
         # print(confusion)
         #print(pr_recall)
         # Update the metrics
-        for i in range(len(all_o_preds_test)):
-            # Check if y_true[i] or y_pred[i] has only one element
-            print('all_gt_i: ', all_o_gt_test[i])
-            if len(np.unique(np.argmax(all_o_gt_test[i], axis=-1))) == 1 or len(np.unique(np.argmax(all_o_preds_test[i], axis=-1))) == 1:
-                continue
-            print('COMING TO PREVISION RECALL CODE...')
-            precision.update_state(all_o_gt_test[i], all_o_preds_test[i])
-            recall.update_state(all_o_gt_test[i], all_o_preds_test[i])
+        #for i in range(len(all_o_preds_test)):
+        # Check if y_true[i] or y_pred[i] has only one element
+        print('all_gt_i: ', all_o_gt_test[i])
+        # if len(np.unique(np.argmax(all_o_gt_test[i], axis=-1))) == 1 or len(np.unique(np.argmax(all_o_preds_test[i], axis=-1))) == 1:
+        #     continue
+        print('COMING TO PREVISION RECALL CODE...')
+        precision.update_state(all_o_gt_test, all_o_preds_test)
+        recall.update_state(all_o_gt_test, all_o_preds_test)
 
-            # Calculate the confusion matrix
-            cm = confusion_matrix(np.argmax(all_o_gt_test[i], axis=-1), np.argmax(all_o_preds_test[i], axis=-1))
+        # Calculate the confusion matrix
+        cm = confusion_matrix(np.argmax(all_o_gt_test, axis=-1), np.argmax(all_o_preds_test, axis=-1))
 
-            # Log the metrics and confusion matrix to Tensorboard
-            with train_summary_writer.as_default():
-                tf.summary.scalar('precision', precision.result(), step=i)
-                tf.summary.scalar('recall', recall.result(), step=i)
-                tf.summary.text('confusion_matrix', np.array2string(cm), step=i)
+        # Log the metrics and confusion matrix to Tensorboard
+        with train_summary_writer.as_default():
+            tf.summary.scalar('precision', precision.result(), step=i)
+            tf.summary.scalar('recall', recall.result(), step=i)
+            tf.summary.text('confusion_matrix', np.array2string(cm), step=i)
 
-            # Reset the metrics for the next batch
-            precision.reset_states()
-            recall.reset_states()
+        # Reset the metrics for the next batch
+        precision.reset_states()
+        recall.reset_states()
 
-        try:
-            scheduler.step(-val_acc)
-        except:
-            scheduler.step()
+    try:
+        scheduler.step(-val_acc)
+    except:
+        scheduler.step()
 
         if args.filename not in ['', "", 'none']:
             writer.add_scalar('data/train auc', train_acc, epoch)
