@@ -932,12 +932,11 @@ def main(args):
             writer.add_scalar('data/train loss', train_loss, epoch)
             writer.add_scalar('data/val loss', val_loss, epoch)
             writer.add_scalar('data/test loss', test_loss, epoch)
-
+        args2 = copy.deepcopy(model.args)
+        save_weights_path = os.path.join(os.getcwd(), 'odour_weights' + str(epoch) + '.pt')
+        torch.save({'model_state_dict': model.state_dict(), 'args': args2}, save_weights_path)
         if stopper.step(val_acc, model, test_score=test_acc, IsMaster=args.debug):
             print('stopper.step happening')
-            args2 = copy.deepcopy(model.args)
-            save_weights_path = os.path.join(os.getcwd(), 'odour_weights' + str(epoch) + '.pt')
-            torch.save({'model_state_dict': model.state_dict(), 'args': args2}, save_weights_path)
             stopper.report_final_results(i_epoch=epoch)
             break
         stopper.print_best_results(i_epoch=epoch, val_cls_loss=val_loss, train_acc=train_acc, val_score=val_acc,
