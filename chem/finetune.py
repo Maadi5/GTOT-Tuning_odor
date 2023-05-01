@@ -317,7 +317,6 @@ def calculate_channel_attention(dataset, return_layers, args):
         model.to(device)
         backbone = model.gnn
     classifier = model
-
     data_loader = DataLoader(dataset, batch_size=args.attention_batch_size, shuffle=True,
                              num_workers=args.num_workers, drop_last=False)
 
@@ -715,6 +714,7 @@ def main(args):
         raise ValueError("Invalid split option.")
 
     print('train_dataset_0: ', train_dataset[0])
+    print('dataset_type: ', type(train_dataset))
     shuffle = True
     if args.debug:
         shuffle = False
