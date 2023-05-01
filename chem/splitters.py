@@ -64,12 +64,18 @@ def scaffold_split(dataset, smiles_list, task_idx=None, null_value=0,
 
     # create dict of the form {scaffold_i: [idx1, idx....]}
     all_scaffolds = {}
+    all_scaffolds_smiles = {}
     for i, smiles in smiles_list:
         scaffold = generate_scaffold(smiles, include_chirality=True)
         if scaffold not in all_scaffolds:
             all_scaffolds[scaffold] = [i]
+            all_scaffolds_smiles[scaffold] = [smiles]
         else:
             all_scaffolds[scaffold].append(i)
+            all_scaffolds_smiles[scaffold].append(smiles)
+
+    print('all_scaffolds: ', all_scaffolds)
+    print('all_scaffolds_smiles: ', all_scaffolds_smiles)
 
     # sort from largest to smallest sets
     all_scaffolds = {key: sorted(value) for key, value in all_scaffolds.items()}
@@ -77,6 +83,7 @@ def scaffold_split(dataset, smiles_list, task_idx=None, null_value=0,
         scaffold_set for (scaffold, scaffold_set) in sorted(
             all_scaffolds.items(), key=lambda x: (len(x[1]), x[1][0]), reverse=True)
     ]
+    print('all scaffolds sets: ', all_scaffold_sets)
 
     # get train, valid test indices
     train_cutoff = frac_train * len(smiles_list)
