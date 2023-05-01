@@ -148,11 +148,16 @@ def random_scaffold_split(dataset, smiles_list, task_idx=None, null_value=0,
     rng = np.random.RandomState(seed)
 
     scaffolds = defaultdict(list)
+    smiles_scaffold = defaultdict(list)
     for ind, smiles in smiles_list:
         scaffold = generate_scaffold(smiles, include_chirality=True)
         scaffolds[scaffold].append(ind)
+        smiles_scaffold[scaffold].append(smiles)
+
+    print('scaffolds: ', scaffolds)
 
     scaffold_sets = rng.permutation(list(scaffolds.values()))
+    print('scaffold_sets: ', scaffold_sets)
 
     n_total_valid = int(np.floor(frac_valid * len(dataset)))
     n_total_test = int(np.floor(frac_test * len(dataset)))
