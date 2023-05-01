@@ -6,6 +6,7 @@ from sklearn.preprocessing import MultiLabelBinarizer
 import math
 import torch.nn.functional as F
 import torch.optim as optim
+import copy
 
 from tqdm import tqdm
 import numpy as np
@@ -840,7 +841,6 @@ def main(args):
                                                            min_lr=1e-8,
                                                            eps=1e-08)
     save_model_name = os.path.join(args.save_path, f'{args.gnn_type}_{args.dataset}_{args.tag}.pt')
-    save_model_name = os.path.join(os.getcwd(), 'odour_weights' + '.pt')
     stopper = EarlyStopping(mode='higher', patience=args.patience, filename=save_model_name)
 
     # if 0 and len(args.filename) != 0:
@@ -910,6 +910,7 @@ def main(args):
         cm = confusion_matrix(np.argmax(all_o_gt_test, axis=-1), np.argmax(all_o_preds_test, axis=-1))
 
         # Log the metrics and confusion matrix to Tensorboard
+        # Log the metrics and confusion matrix to Tensorboard
         with train_summary_writer.as_default():
             tf.summary.scalar('precision', precision.result(), step=epoch)
             tf.summary.scalar('recall', recall.result(), step=epoch)
@@ -934,6 +935,9 @@ def main(args):
 
         if stopper.step(val_acc, model, test_score=test_acc, IsMaster=args.debug):
             print('stopper.step happening')
+            args2 = copy.deepcopy(model.args)
+            save_weights_path = os.path.join(os.getcwd(), 'odour_weights' + str(epoch) + '.pt')
+            torch.save({'model_state_dict': model.state_dict(), 'args': args2}, save_weights_path)
             stopper.report_final_results(i_epoch=epoch)
             break
         stopper.print_best_results(i_epoch=epoch, val_cls_loss=val_loss, train_acc=train_acc, val_score=val_acc,
