@@ -7,6 +7,7 @@ import math
 import torch.nn.functional as F
 import torch.optim as optim
 import copy
+import json
 
 from tqdm import tqdm
 import numpy as np
@@ -690,11 +691,14 @@ def main(args):
             0].tolist()
 
 
-        train_dataset, valid_dataset, test_dataset = scaffold_split(dataset, smiles_list, null_value=0,
+        train_dataset, valid_dataset, test_dataset,smiles_distrib = scaffold_split(dataset, smiles_list, null_value=0,
                                                                     frac_train=train_val_test[0],
                                                                     frac_valid=train_val_test[1],
                                                                     frac_test=train_val_test[2],
-                                                                    train_radio=args.train_radio)
+                                                                    train_radio=args.train_radio,
+                                                                    return_smiles=True)
+        test_json = {'train': smiles_distrib[0], 'valid': smiles_distrib[1], 'test': smiles_distrib[2]}
+        json.dump(test_json, open(os.path.join(os.getcwd(), 'dataset_smiles.json'), 'w', encoding='utf8'), ensure_ascii=False)
 
         print(
             f"scaffold, train:test:val={len(train_dataset)}:{len(valid_dataset)}:{len(test_dataset)}, train_radio:{args.train_radio}")

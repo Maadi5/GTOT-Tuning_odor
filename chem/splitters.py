@@ -65,6 +65,8 @@ def scaffold_split(dataset, smiles_list, task_idx=None, null_value=0,
     # create dict of the form {scaffold_i: [idx1, idx....]}
     all_scaffolds = {}
     all_scaffolds_smiles = {}
+    print('smiles_list: ', smiles_list)
+    smiles_with_index = []
     for i, smiles in smiles_list:
         scaffold = generate_scaffold(smiles, include_chirality=True)
         if scaffold not in all_scaffolds:
@@ -73,6 +75,7 @@ def scaffold_split(dataset, smiles_list, task_idx=None, null_value=0,
         else:
             all_scaffolds[scaffold].append(i)
             all_scaffolds_smiles[scaffold].append(smiles)
+        smiles_with_index.append(smiles)
 
     print('all_scaffolds: ', all_scaffolds)
     print('all_scaffolds_smiles: ', all_scaffolds_smiles)
@@ -102,6 +105,14 @@ def scaffold_split(dataset, smiles_list, task_idx=None, null_value=0,
 
     assert len(set(train_idx).intersection(set(valid_idx))) == 0
     assert len(set(test_idx).intersection(set(valid_idx))) == 0
+
+    # dataset_dict = {'train': [], 'valid': [], 'test': []}
+    # for idx in train_idx:
+    #     dataset_dict['train'].append(smiles_with_index[idx])
+    # for idx in valid_idx:
+    #     dataset_dict['valid'].append(smiles_with_index[idx])
+    # for idx in test_idx:
+    #     dataset_dict['test'].append(smiles_with_index[idx])
 
     train_dataset = dataset[torch.tensor(train_idx)]
     valid_dataset = dataset[torch.tensor(valid_idx)]
