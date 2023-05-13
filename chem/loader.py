@@ -1,3 +1,5 @@
+
+
 import os
 import torch
 import pickle
@@ -17,8 +19,6 @@ from torch_geometric.data import InMemoryDataset
 from torch_geometric.data import Batch
 from itertools import repeat, product, chain
 from pathlib import Path
-
-
 # allowable node and edge features
 allowable_features = {
     'possible_atomic_num_list' : list(range(1, 119)),

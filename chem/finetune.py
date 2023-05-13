@@ -574,7 +574,7 @@ def eval(args, model, device, loader):
     eval_meter = Meter()
     for step, batch in enumerate(tqdm(loader, desc="Iteration", disable=True)):
         batch = batch.to(device)
-
+        print('BATCH.BATCH VALUE: ', batch.batch)
         with torch.no_grad():
             pred = model(batch.x, batch.edge_index, batch.edge_attr, batch.batch)
             y = batch.y.view(pred.shape)
@@ -697,6 +697,7 @@ def main(args):
                                                                     frac_test=train_val_test[2],
                                                                     train_radio=args.train_radio,
                                                                     return_smiles=True)
+
         test_json = {'train': smiles_distrib[0], 'valid': smiles_distrib[1], 'test': smiles_distrib[2]}
         json.dump(test_json, open(os.path.join(os.getcwd(), 'dataset_smiles.json'), 'w', encoding='utf8'), ensure_ascii=False)
 
