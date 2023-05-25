@@ -18,7 +18,13 @@ from torch_geometric.data import Batch
 from itertools import repeat, product, chain
 from pathlib import Path
 from model import GNN_graphpred
+from ftlib.finetune.delta import IntermediateLayerGetter, L2Regularization, get_attribute
+from ftlib.finetune.delta import SPRegularization, FrobeniusRegularization
 import json
+from commom.meter import AverageMeter, ProgressMeter
+from commom.eval import Meter
+from tqdm import tqdm
+from loader import MoleculeDataset
 
 
 
@@ -140,9 +146,41 @@ def _load_odour_dataset_json(dataset_path, split_json_path, split= 'test'):
     assert len(smiles_list) == len(labels)
     return smiles_list, rdkit_mol_objs_list, labels.values
 
+def Inference(args, model, device, loader, source_getter, target_getter, plot_confusion_mat=False):
+    model.eval()
 
+    loss_sum = []
+    eval_meter = Meter()
+    for step, batch in enumerate(tqdm(loader, desc="Iteration", disable=True)):
+        batch = batch.to(device)
 
-def test(args, input_df_path, split_json_path):
+        with torch.no_grad():
+
+            intermediate_output_t, output_t = target_getter(batch.x, batch.edge_index, batch.edge_attr, batch.batch)
+            pred = output_t
+
+        y = batch.y.view(pred.shape)
+        eval_meter.update(pred, y, mask=y ** 2 > 0)
+
+    metric = np.mean(eval_meter.compute_metric('roc_auc_score_finetune'))
+
+    return metric, sum(loss_sum)
+
+def test(args, input_df_path, split_json_path, model, source_getter):
+
+    if args.gnn_type == 'gin':
+
+        return_layers = ['gnn.gnns.4.mlp.2']
+    elif args.gnn_type == 'gcn':
+        return_layers = ['gnn.gnns.4.linear']
+    elif args.gnn_type in ['gat', 'gat_ot']:
+        return_layers = [
+            'gnn.gnns.4.weight_linear']
+
+    dataset = MoleculeDataset(os.path.join(args.data_path, args.dataset), dataset=args.dataset)
+    #source_getter = IntermediateLayerGetter(source_model, return_layers=return_layers)
+    target_getter = IntermediateLayerGetter(model, return_layers=return_layers)
+
     device = args.device
     model = GNN_graphpred(args.num_layer, args.emb_dim, args.num_tasks, JK=args.JK, drop_ratio=args.dropout_ratio,
                           graph_pooling=args.graph_pooling, gnn_type=args.gnn_type)
@@ -174,7 +212,8 @@ def test(args, input_df_path, split_json_path):
             print('sum 0 data: ', data.id)
         data_list.append(data)
         # data_smiles_list.append(smiles_list[i])
-
+    test_acc, test_loss = Inference(args, model, device, test_loader, source_getter, target_getter,
+                                    plot_confusion_mat=True)
 
 if __name__ == "__main__":
     from parser import *
