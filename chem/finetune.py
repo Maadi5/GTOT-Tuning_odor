@@ -695,8 +695,9 @@ def main(args):
                                                                     train_radio=args.train_radio,
                                                                     return_smiles=True)
 
+        print('test dataset: ', test_dataset)
         test_json = {'train': smiles_distrib[0], 'valid': smiles_distrib[1], 'test': smiles_distrib[2]}
-        json.dump(test_json, open(os.path.join(os.getcwd(), 'dataset_smiles.json'), 'w', encoding='utf8'), ensure_ascii=False)
+        # json.dump(test_json, open(os.path.join(os.getcwd(), 'dataset_smiles.json'), 'w', encoding='utf8'), ensure_ascii=False)
 
         print(
             f"scaffold, train:test:val={len(train_dataset)}:{len(valid_dataset)}:{len(test_dataset)}, train_radio:{args.train_radio}")
