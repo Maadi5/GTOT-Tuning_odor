@@ -203,7 +203,7 @@ def test(args, split_json_path):
     if not args.input_model_file in ["", 'none']:
         print('loading pretrain model from', args.input_model_file)
         source_model.from_pretrained(args.input_model_file)
-    model.from_pretrained(os.path.join(args.data_path, args.dataset, 'final_test_weights.pt'))
+    model.load_state_dict(os.path.join(args.data_path, args.dataset, 'final_test_weights.pt'))
     model.to(device)
     backbone = model.gnn
     classifier = model
