@@ -716,7 +716,7 @@ def main(args):
     else:
         raise ValueError("Invalid split option.")
 
-    print('train_dataset_0: ', train_dataset[0])
+    # print('train_dataset_0: ', train_dataset[0])
     print('dataset_type: ', type(train_dataset))
     shuffle = True
     if args.debug:
