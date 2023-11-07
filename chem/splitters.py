@@ -291,9 +291,9 @@ def predetermined_split(dataset, target_json, smiles_list, task_idx=None, null_v
     num_mols = len(dataset)
     all_idx = list(range(num_mols))
 
-    train_idx = [idx for idx, val in smiles_list if val in target_json['train']]
-    valid_idx = [idx for idx, val in smiles_list if val in target_json['valid']]
-    test_idx = [idx for idx, val in smiles_list if val in target_json['test']]
+    train_idx = [idx for idx, val in enumerate(smiles_list) if val in target_json['train']]
+    valid_idx = [idx for idx, val in enumerate(smiles_list) if val in target_json['valid']]
+    test_idx = [idx for idx, val in enumerate(smiles_list) if val in target_json['test']]
 
     assert len(set(train_idx).intersection(set(valid_idx))) == 0
     assert len(set(valid_idx).intersection(set(test_idx))) == 0
