@@ -1170,7 +1170,6 @@ def _load__dataset(input_path):
 
 def _load_odour_dataset(input_path):
     """
-
     :param input_path:
     :return: list of smiles, list of rdkit mol obj, np.array containing the
     labels

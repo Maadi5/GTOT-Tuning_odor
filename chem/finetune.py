@@ -678,16 +678,14 @@ def main(args):
 
     print(dataset)
     train_val_test = [0.8, 0.1, 0.1]
-    smiles_list = pd.read_csv(os.path.join(args.data_path, args.dataset, 'processed/smiles.csv'), header=None)[
-        0].tolist()
+    smiles_list = pd.read_csv(os.path.join(args.data_path, args.dataset, 'processed/smiles.csv'), header=None)[0].tolist()
     ds_df = pd.read_csv(os.path.join(args.data_path, args.dataset, 'raw/odour.csv'), index_col=False)
     labels_all = list(ds_df.columns)[:-2]
     print('odors: ', labels_all)
     print('len labels: ', len(labels_all))
     if args.split == "scaffold":
 
-        smiles_list = pd.read_csv(os.path.join(args.data_path, args.dataset, 'processed/smiles.csv'), header=None)[
-            0].tolist()
+        smiles_list = pd.read_csv(os.path.join(args.data_path, args.dataset, 'processed/smiles.csv'), header=None)[0].tolist()
 
 
         train_dataset, valid_dataset, test_dataset,smiles_distrib = scaffold_split(dataset, smiles_list, null_value=0,

@@ -5,6 +5,7 @@ import collections
 import math
 import pandas as pd
 import numpy as np
+from splitters import predetermined_split
 import networkx as nx
 from rdkit import Chem
 from rdkit.Chem import Descriptors
@@ -13,6 +14,7 @@ from rdkit import DataStructs
 from rdkit.Chem.rdMolDescriptors import GetMorganFingerprintAsBitVect
 from torch.utils import data
 from torch_geometric.data import Data
+from torch_geometric.data import DataLoader
 from torch_geometric.data import InMemoryDataset
 from torch_geometric.data import Batch
 from itertools import repeat, product, chain
@@ -127,7 +129,7 @@ def _load_odour_dataset_json(dataset_path, split_json_path, split= 'test'):
     #smiles_list = input_df['smiles']
     rdkit_mol_objs_list = [AllChem.MolFromSmiles(s) for s in smiles_list]
     tasks = list(input_df.columns[:-2])
-    print('tasks: '. tasks)
+    print('tasks: ', tasks)
     labels = input_df[tasks]
     # convert 0 to 1
     labels = labels.replace(0, 1)
@@ -166,10 +168,9 @@ def Inference(args, model, device, loader, source_getter, target_getter, plot_co
 
     return metric, sum(loss_sum)
 
-def test(args, input_df_path, split_json_path, model, source_getter):
+def test(args, split_json_path):
 
     if args.gnn_type == 'gin':
-
         return_layers = ['gnn.gnns.4.mlp.2']
     elif args.gnn_type == 'gcn':
         return_layers = ['gnn.gnns.4.linear']
@@ -177,43 +178,37 @@ def test(args, input_df_path, split_json_path, model, source_getter):
         return_layers = [
             'gnn.gnns.4.weight_linear']
 
+    target_json = json.load(open(split_json_path, encoding='utf8'))
+
+    smiles_list = pd.read_csv(os.path.join(args.data_path, args.dataset, 'processed/smiles.csv'), header=None)[0].tolist()
     dataset = MoleculeDataset(os.path.join(args.data_path, args.dataset), dataset=args.dataset)
-    #source_getter = IntermediateLayerGetter(source_model, return_layers=return_layers)
-    target_getter = IntermediateLayerGetter(model, return_layers=return_layers)
+    train_dataset, valid_dataset, test_dataset,smiles_distrib = predetermined_split(dataset= dataset, target_json= target_json, smiles_list= smiles_list)
 
     device = args.device
-    model = GNN_graphpred(args.num_layer, args.emb_dim, args.num_tasks, JK=args.JK, drop_ratio=args.dropout_ratio,
-                          graph_pooling=args.graph_pooling, gnn_type=args.gnn_type)
+    ## finetuned model
+    model = GNN_graphpred(args.num_layer, args.emb_dim, args.num_task, JK=args.JK, drop_ratio=args.dropout_ratio,
+                          graph_pooling=args.graph_pooling, gnn_type=args.gnn_type, args=args)
+    ## pretrained model
+    source_model = GNN_graphpred(args.num_layer, args.emb_dim, args.num_task, JK=args.JK, drop_ratio=args.dropout_ratio,
+                                 graph_pooling=args.graph_pooling, gnn_type=args.gnn_type, args=args)
+    # get the output feature map of the mediate layer in full model
+    source_getter = IntermediateLayerGetter(source_model, return_layers=return_layers)
+    target_getter = IntermediateLayerGetter(model, return_layers=return_layers)
 
-    if not args.input_model_file == "":
-        model.from_pretrained(args.input_model_file)
-        model.to(device)
-        backbone = model.gnn
+
+    if not args.input_model_file in ["", 'none']:
+        print('loading pretrain model from', args.input_model_file)
+        source_model.from_pretrained(args.input_model_file)
+    model.from_pretrained(os.path.join(args.data_path, args.dataset, 'final_test_weights.pt'))
+    model.to(device)
+    backbone = model.gnn
     classifier = model
-
-    smiles_list, rdkit_mol_objs, label_values = \
-        _load_odour_dataset_json(dataset_path= input_df_path, split_json_path= split_json_path)
-
-    data_list = []
-    for i in range(len(smiles_list)):
-        # print(i)
-        rdkit_mol = rdkit_mol_objs[i]
-        # # convert aromatic bonds to double bonds
-        # Chem.SanitizeMol(rdkit_mol,
-        #                  sanitizeOps=Chem.SanitizeFlags.SANITIZE_KEKULIZE)
-        data = mol_to_graph_data_obj_simple(rdkit_mol)
-        # manually add mol id
-        data.id = torch.tensor(
-            [i])  # id here is the index of the mol in
-        # # the dataset
-        # data.y = torch.tensor(labels[i, :])
-        # print('sum of data: ', torch.sum(data.y))
-        if torch.sum(data.y) == 0:
-            print('sum 0 data: ', data.id)
-        data_list.append(data)
-        # data_smiles_list.append(smiles_list[i])
+    test_loader = DataLoader(test_dataset, batch_size=args.batch_size, shuffle=False, num_workers=args.num_workers)
     test_acc, test_loss = Inference(args, model, device, test_loader, source_getter, target_getter,
                                     plot_confusion_mat=True)
+
+    print('test accuracy: ', test_acc)
+    print('test loss: ', test_loss)
 
 if __name__ == "__main__":
     from parser import *
@@ -222,3 +217,4 @@ if __name__ == "__main__":
     print(args)
     elapsed_times = []
     seed_nums = list(range(10))
+    test(args, split_json_path='dataset_smiles.json')
