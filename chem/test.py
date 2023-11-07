@@ -169,6 +169,9 @@ def Inference(args, model, device, loader, source_getter, target_getter, plot_co
     return metric, sum(loss_sum)
 
 def test(args, split_json_path):
+    device = torch.device("cuda:" + str(args.gpu)) if torch.cuda.is_available() else torch.device("cpu")
+    print('device: ', device)
+    args.device = device
 
     if args.gnn_type == 'gin':
         return_layers = ['gnn.gnns.4.mlp.2']
