@@ -169,6 +169,7 @@ def Inference(args, model, device, loader, source_getter, target_getter, plot_co
     return metric, sum(loss_sum)
 
 def test(args, split_json_path):
+    num_tasks = 133
     device = torch.device("cuda:" + str(args.gpu)) if torch.cuda.is_available() else torch.device("cpu")
     print('device: ', device)
     args.device = device
@@ -189,10 +190,10 @@ def test(args, split_json_path):
 
     device = args.device
     ## finetuned model
-    model = GNN_graphpred(args.num_layer, args.emb_dim, args.num_task, JK=args.JK, drop_ratio=args.dropout_ratio,
+    model = GNN_graphpred(args.num_layer, args.emb_dim, num_tasks, JK=args.JK, drop_ratio=args.dropout_ratio,
                           graph_pooling=args.graph_pooling, gnn_type=args.gnn_type, args=args)
     ## pretrained model
-    source_model = GNN_graphpred(args.num_layer, args.emb_dim, args.num_task, JK=args.JK, drop_ratio=args.dropout_ratio,
+    source_model = GNN_graphpred(args.num_layer, args.emb_dim, num_tasks, JK=args.JK, drop_ratio=args.dropout_ratio,
                                  graph_pooling=args.graph_pooling, gnn_type=args.gnn_type, args=args)
     # get the output feature map of the mediate layer in full model
     source_getter = IntermediateLayerGetter(source_model, return_layers=return_layers)
