@@ -207,6 +207,7 @@ def test(args, split_json_path):
     model.to(device)
     backbone = model.gnn
     classifier = model
+    print('test dataset: ', test_dataset)
     test_loader = DataLoader(test_dataset, batch_size=args.batch_size, shuffle=False, num_workers=args.num_workers)
     test_acc, test_loss = Inference(args, model, device, test_loader, source_getter, target_getter,
                                     plot_confusion_mat=True)
