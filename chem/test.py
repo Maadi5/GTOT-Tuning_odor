@@ -222,7 +222,9 @@ def test(args, split_json_path):
     model.load_state_dict(torch.load(os.path.join(args.data_path, args.dataset, 'final_test_weights.pt'))['model_state_dict'])
     model.to(device)
     backbone = model.gnn
+    print("backbone: ", backbone)
     classifier = model
+    print("classifier: ", classifier)
     print('test dataset: ', test_dataset)
     test_loader = DataLoader(test_dataset, batch_size=args.batch_size, shuffle=False, num_workers=args.num_workers)
     test_acc, test_loss = Inference(args, model, device, test_loader, source_getter, target_getter,
