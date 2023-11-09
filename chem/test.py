@@ -27,6 +27,11 @@ from commom.meter import AverageMeter, ProgressMeter
 from commom.eval import Meter
 from tqdm import tqdm
 from loader import MoleculeDataset
+from sklearn.preprocessing import StandardScaler
+from sklearn.decomposition import PCA
+# Assuming you have extracted embeddings in the 'embeddings' variable
+# Create a StandardScaler instance
+scaler = StandardScaler()
 
 
 
@@ -159,8 +164,18 @@ def Inference(args, model, device, loader, source_getter, target_getter, plot_co
         with torch.no_grad():
 
             intermediate_output_t, output_t = target_getter(batch.x, batch.edge_index, batch.edge_attr, batch.batch)
-            print("Model output layer:", type(output_t), output_t.shape)
+            # Fit the scaler on the embeddings and transform the data
+            standardized_embeddings = scaler.fit_transform(output_t)
             pred = output_t
+            n_components = 2  # You can choose the number of components you want to analyze
+            pca = PCA(n_components=n_components)
+
+            # Fit the PCA model on your standardized embeddings
+            pca.fit(standardized_embeddings)
+
+            # Transform the data to the new reduced-dimensional space
+            reduced_embeddings = pca.transform(standardized_embeddings)
+            print('reduced embeddings: ', reduced_embeddings.shape)
 
         y = batch.y.view(pred.shape)
         eval_meter.update(pred, y, mask=y ** 2 > 0)
