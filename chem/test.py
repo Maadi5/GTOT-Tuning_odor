@@ -159,6 +159,7 @@ def Inference(args, model, device, loader, source_getter, target_getter, plot_co
         with torch.no_grad():
 
             intermediate_output_t, output_t = target_getter(batch.x, batch.edge_index, batch.edge_attr, batch.batch)
+            print("Model output layer:", type(output_t), output_t)
             pred = output_t
 
         y = batch.y.view(pred.shape)
