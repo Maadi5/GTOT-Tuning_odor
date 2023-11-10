@@ -277,8 +277,8 @@ def Inference(args, model, device, loader, source_getter, target_getter,tasks, p
             # Fit the scaler on the embeddings and transform the data
             standardized_embeddings = scaler.fit_transform(output_t)
             pred = output_t
-            # print('prediction shape: ', pred.shape)
-            n_components = 1  # You can choose the number of components you want to analyze
+            print('prediction shape: ', pred.shape)
+            n_components = 2  # You can choose the number of components you want to analyze
             pca = PCA(n_components=n_components)
 
             # Fit the PCA model on your standardized embeddings
