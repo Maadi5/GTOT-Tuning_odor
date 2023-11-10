@@ -263,7 +263,7 @@ def _load_odour_dataset_json(dataset_path, split_json_path, split= 'test'):
     assert len(smiles_list) == len(labels)
     return smiles_list, rdkit_mol_objs_list, labels.values
 
-def Inference(args, model, device, loader, source_getter, target_getter,smiles_list, plot_confusion_mat=False):
+def Inference(args, model, device, loader, source_getter, target_getter,tasks, plot_confusion_mat=False):
     model.eval()
 
     loss_sum = []
@@ -295,7 +295,7 @@ def Inference(args, model, device, loader, source_getter, target_getter,smiles_l
                 tg = []
                 for idx, t in enumerate(target):
                     if t != -1:
-                        tg.append(smiles_list[idx])
+                        tg.append(tasks[idx])
                 all_y.append(tg)
 
 
@@ -317,7 +317,8 @@ def test(args, split_json_path):
     device = torch.device("cuda:" + str(args.gpu)) if torch.cuda.is_available() else torch.device("cpu")
     print('device: ', device)
     args.device = device
-
+    dataset = pd.read_csv(r'chem/dataset/odour/raw/odour.csv')
+    tasks = list(dataset.columns[:-2])
     if args.gnn_type == 'gin':
         return_layers = ['gnn.gnns.4.mlp.2']
     elif args.gnn_type == 'gcn':
@@ -355,7 +356,7 @@ def test(args, split_json_path):
     print("classifier: ", classifier)
     print('test dataset: ', test_dataset)
     test_loader = DataLoader(test_dataset, batch_size=args.batch_size, shuffle=False, num_workers=args.num_workers)
-    test_acc, test_loss = Inference(args, model, device, test_loader, source_getter, target_getter,smiles_list,
+    test_acc, test_loss = Inference(args, model, device, test_loader, source_getter, target_getter,tasks,
                                     plot_confusion_mat=True)
 
     print('test accuracy: ', test_acc)
