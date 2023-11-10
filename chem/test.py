@@ -263,7 +263,7 @@ def _load_odour_dataset_json(dataset_path, split_json_path, split= 'test'):
     assert len(smiles_list) == len(labels)
     return smiles_list, rdkit_mol_objs_list, labels.values
 
-def Inference(args, model, device, loader, source_getter, target_getter, plot_confusion_mat=False):
+def Inference(args, model, device, loader, source_getter, target_getter,smiles_list, plot_confusion_mat=False):
     model.eval()
 
     loss_sum = []
@@ -289,7 +289,17 @@ def Inference(args, model, device, loader, source_getter, target_getter, plot_co
             # print('reduced embeddings: ', reduced_embeddings.shape)
             plt.scatter(reduced_embeddings[:, 0], reduced_embeddings[:, 1])
             y = batch.y.view(pred.shape).to(torch.float64)
-            print('Prediction: ', y)
+            target_list = y.cpu().numpy().tolist()
+            all_y = []
+            for target in target_list:
+                tg = []
+                for idx, t in enumerate(target):
+                    if t != -1:
+                        tg.append(smiles_list[idx])
+                all_y.append(tg)
+
+
+            print('Prediction: ', all_y)
             plt.title('2D Visualization of Model Activations')
             plt.xlabel('Principal Component 1')
             plt.ylabel('Principal Component 2')
@@ -345,7 +355,7 @@ def test(args, split_json_path):
     print("classifier: ", classifier)
     print('test dataset: ', test_dataset)
     test_loader = DataLoader(test_dataset, batch_size=args.batch_size, shuffle=False, num_workers=args.num_workers)
-    test_acc, test_loss = Inference(args, model, device, test_loader, source_getter, target_getter,
+    test_acc, test_loss = Inference(args, model, device, test_loader, source_getter, target_getter,smiles_list,
                                     plot_confusion_mat=True)
 
     print('test accuracy: ', test_acc)
