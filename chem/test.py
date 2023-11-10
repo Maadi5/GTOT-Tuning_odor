@@ -42,7 +42,7 @@ def parse_args():
         description='PyTorch implementation of pre-training of graph neural networks with funetune technique')
     parser.add_argument('--gpu', type=int, default=0,
                         help='which gpu to use if any (default: 0)')
-    parser.add_argument('--batch_size', type=int, default=32,
+    parser.add_argument('--batch_size', type=int, default=1,
                         help='input batch size for training (default: 32)')
     parser.add_argument('--epochs', type=int, default=100,
                         help='number of epochs to train (default: 100)')
