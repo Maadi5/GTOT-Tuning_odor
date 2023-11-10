@@ -229,7 +229,7 @@ def test(args, split_json_path):
             'gnn.gnns.4.weight_linear']
 
     target_json = json.load(open(split_json_path, encoding='utf8'))
-
+    print(args.data_path, args.dataset)
     smiles_list = pd.read_csv(os.path.join(args.data_path, args.dataset, 'processed/smiles.csv'), header=None)[0].tolist()
     dataset = MoleculeDataset(os.path.join(args.data_path, args.dataset), dataset=args.dataset)
     train_dataset, valid_dataset, test_dataset,smiles_distrib = predetermined_split(dataset= dataset, target_json= target_json, smiles_list= smiles_list)
