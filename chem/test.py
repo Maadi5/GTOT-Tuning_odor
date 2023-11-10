@@ -268,8 +268,8 @@ def test(args, split_json_path):
 if __name__ == "__main__":
     from parser import *
 
-    # args = get_parser()
-    args = parse_args()
+    args = get_parser()
+    # args = parse_args()
     print(args)
     elapsed_times = []
     seed_nums = list(range(10))

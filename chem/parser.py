@@ -39,8 +39,10 @@ def get_parser():
     parser.add_argument('--JK', type=str, default="last",
                         help='how the node features across layers are combined. last, sum, max or concat')
     parser.add_argument('--gnn_type', type=str, default="gin")
-    parser.add_argument('--dataset', type=str, default='tox21',
+    parser.add_argument('--dataset', type=str, default='odour',
                         help='root directory of dataset. For now, only classification.')
+    parser.add_argument('--rg_type', type=str, default='gtot_feature_map', help='Value for rg_type')
+    parser.add_argument('--ft_type', type=str, default='gtot', help='Value for ft_type')
     parser.add_argument('--input_model_file', type=str, default='', help='filename to read the model (if there is any)')
     parser.add_argument('--filename', type=str, default='none', help='output filename')
     parser.add_argument('--seed', type=int, default=42, help="Seed for splitting the dataset.")
@@ -77,7 +79,7 @@ def get_parser():
     parser.add_argument("--attention_file", type=str, default='channel_attention.pt',
                         help="Where to save and load channel attention file.")
     parser.add_argument("--data_path", type=str,
-                        default='./dataset',
+                        default='chem/dataset/',
                         help="Where to save and load dataset.")
 
     parser.add_argument('--attention-batch-size', default=64, type=int,
@@ -99,7 +101,7 @@ def get_parser():
                         help='early stop patience.')
 
     parser.add_argument('--save_file', default='results.csv', help='save file name for results')
-    parser.add_argument('--tag', default='none', help='tag for labeling the experiment')
+    parser.add_argument('--tag', default='gtot_cosine', help='tag for labeling the experiment')
     parser.add_argument('--debug', action='store_true', help='whether use the debug')
 
 
