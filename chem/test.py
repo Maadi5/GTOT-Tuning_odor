@@ -40,7 +40,7 @@ def parse_args():
     parser = argparse.ArgumentParser(description='Description of your script.')
 
     # Add the arguments
-    parser.add_argument('--data_path', type=str, default='chem/dataset', help='Path to the data')
+    parser.add_argument('--data_path', type=str, default='chem/dataset/', help='Path to the data')
     parser.add_argument('--rg_type', type=str, default='gtot_feature_map', help='Value for rg_type')
     parser.add_argument('--ft_type', type=str, default='gtot', help='Value for ft_type')
     parser.add_argument('--tag', type=str, default='gtot_cosine', help='Value for tag')
