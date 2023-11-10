@@ -277,7 +277,7 @@ def Inference(args, model, device, loader, source_getter, target_getter,tasks, p
             # Fit the scaler on the embeddings and transform the data
             intermediate_pred = dict(intermediate_output_t)[list(dict(intermediate_output_t).keys())[0]]
             pred = output_t
-            standardized_embeddings = scaler.fit_transform(intermediate_output_t)
+            standardized_embeddings = scaler.fit_transform(intermediate_pred)
             print('intermediate output: ', intermediate_pred)
             print('prediction shape: ', pred.shape)
             n_components = 2  # You can choose the number of components you want to analyze
