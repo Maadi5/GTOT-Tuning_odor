@@ -275,7 +275,7 @@ def Inference(args, model, device, loader, source_getter, target_getter,tasks, p
 
             intermediate_output_t, output_t = target_getter(batch.x, batch.edge_index, batch.edge_attr, batch.batch)
             # Fit the scaler on the embeddings and transform the data
-            standardized_embeddings = scaler.fit_transform(output_t)
+            standardized_embeddings = scaler.fit_transform(intermediate_output_t)
             pred = output_t
             print('intermediate output: ', dict(intermediate_output_t)[list(dict(intermediate_output_t).keys())[0]].shape)
             print('prediction shape: ', pred.shape)
