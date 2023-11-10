@@ -34,6 +34,29 @@ import matplotlib.pyplot as plt
 # Create a StandardScaler instance
 scaler = StandardScaler()
 
+import argparse
+
+def parse_args():
+    parser = argparse.ArgumentParser(description='Description of your script.')
+
+    # Add the arguments
+    parser.add_argument('--data_path', type=str, default='chem/', help='Path to the data')
+    parser.add_argument('--rg_type', type=str, default='gtot_feature_map', help='Value for rg_type')
+    parser.add_argument('--ft_type', type=str, default='gtot', help='Value for ft_type')
+    parser.add_argument('--tag', type=str, default='gtot_cosine', help='Value for tag')
+    parser.add_argument('--save_file', type=str, help='Value for save_file')
+
+    parser.add_argument('--dist_metric', type=str, default='norm_cosine', help='Value for dist_metric')
+    parser.add_argument('--gtot_order', type=int, default=1, help='Value for gtot_order')
+
+    parser.add_argument('--dataset', type=str, default='odour', help='Value for dataset')
+    parser.add_argument('--gpu', type=int, default=0, help='Value for gpu')
+    parser.add_argument('--runseed', type=int, default=0, help='Value for runseed')
+    parser.add_argument('--gnn_type', type=str, default='gin', help='Value for gnn_type')
+
+    # Add more arguments as needed
+
+    return parser.parse_args()
 
 
 path_to_dataset = os.path.join(os.getcwd(), 'dataset_smiles.json')
@@ -243,7 +266,8 @@ def test(args, split_json_path):
 if __name__ == "__main__":
     from parser import *
 
-    args = get_parser()
+    # args = get_parser()
+    args = parse_args()
     print(args)
     elapsed_times = []
     seed_nums = list(range(10))
