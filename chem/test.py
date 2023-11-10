@@ -29,7 +29,7 @@ from tqdm import tqdm
 from loader import MoleculeDataset
 from sklearn.preprocessing import StandardScaler
 from sklearn.decomposition import PCA
-update matplolibimport matplotlib.pyplot as plt
+import matplotlib.pyplot as plt
 # Assuming you have extracted embeddings in the 'embeddings' variable
 # Create a StandardScaler instance
 scaler = StandardScaler()
