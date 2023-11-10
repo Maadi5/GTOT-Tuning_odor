@@ -53,6 +53,8 @@ def parse_args():
     parser.add_argument('--gpu', type=int, default=0, help='Value for gpu')
     parser.add_argument('--runseed', type=int, default=0, help='Value for runseed')
     parser.add_argument('--gnn_type', type=str, default='gin', help='Value for gnn_type')
+    parser.add_argument('--num_layer', type=int, default=5,
+                        help='number of GNN message passing layers (default: 5).')
 
     # Add more arguments as needed
 
