@@ -350,7 +350,10 @@ def test(args, split_json_path):
         print('loading pretrain model from', args.input_model_file)
         source_model.from_pretrained(args.input_model_file)
     model.load_state_dict(torch.load(os.path.join(args.data_path, args.dataset, 'final_test_weights.pt'))['model_state_dict'])
+
+    print('Model layers: ', model.named_children())
     model.to(device)
+    model.eval()
     backbone = model.gnn
     print("backbone: ", backbone)
     classifier = model
