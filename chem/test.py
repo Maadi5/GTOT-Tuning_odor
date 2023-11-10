@@ -277,7 +277,7 @@ def Inference(args, model, device, loader, source_getter, target_getter, plot_co
             # Fit the scaler on the embeddings and transform the data
             standardized_embeddings = scaler.fit_transform(output_t)
             pred = output_t
-            print('prediction shape: ', pred.shape)
+            # print('prediction shape: ', pred.shape)
             n_components = 2  # You can choose the number of components you want to analyze
             pca = PCA(n_components=n_components)
 
@@ -286,8 +286,10 @@ def Inference(args, model, device, loader, source_getter, target_getter, plot_co
 
             # Transform the data to the new reduced-dimensional space
             reduced_embeddings = pca.transform(standardized_embeddings)
-            print('reduced embeddings: ', reduced_embeddings.shape)
+            # print('reduced embeddings: ', reduced_embeddings.shape)
             plt.scatter(reduced_embeddings[:, 0], reduced_embeddings[:, 1])
+            y = batch.y.view(pred.shape).to(torch.float64)
+            print('Prediction: ', y)
             plt.title('2D Visualization of Model Activations')
             plt.xlabel('Principal Component 1')
             plt.ylabel('Principal Component 2')
