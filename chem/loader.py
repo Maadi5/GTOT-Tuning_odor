@@ -1193,6 +1193,7 @@ def _load_odour_dataset(input_path):
     :return: list of smiles, list of rdkit mol obj, np.array containing the
     labels
     """
+    print('input_path: ', input_path)
     input_df = pd.read_csv(input_path, index_col=False)
     smiles_list = input_df['smiles']
     rdkit_mol_objs_list = [AllChem.MolFromSmiles(s) for s in smiles_list]
