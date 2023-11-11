@@ -141,140 +141,7 @@ def get_metrics_2(y_true, y_pred):
     print(f"Recall: {recall:.3f}")
     plt.show()
 
-odours = ['melon',
- 'aldehydic',
- 'alcoholic',
- 'mint',
- 'smoky',
- 'cooked',
- 'cabbage',
- 'coffee',
- 'pear',
- 'camphoreous',
- 'geranium',
- 'clean',
- 'sandalwood',
- 'caramellic',
- 'mushroom',
- 'cherry',
- 'creamy',
- 'tobacco',
- 'cocoa',
- 'banana',
- 'juicy',
- 'cinnamon',
- 'citrus',
- 'roasted',
- 'dairy',
- 'chamomile',
- 'jasmin',
- 'weedy',
- 'green',
- 'onion',
- 'nutty',
- 'floral',
- 'potato',
- 'solvent',
- 'fresh',
- 'vetiver',
- 'vegetable',
- 'popcorn',
- 'grapefruit',
- 'cucumber',
- 'chocolate',
- 'rose',
- 'brandy',
- 'celery',
- 'cedar',
- 'leathery',
- 'aromatic',
- 'muguet',
- 'medicinal',
- 'phenolic',
- 'spicy',
- 'beefy',
- 'metallic',
- 'buttery',
- 'tomato',
- 'balsamic',
- 'orange',
- 'hawthorn',
- 'pine',
- 'rummy',
- 'leafy',
- 'raspberry',
- 'herbal',
- 'oily',
- 'pungent',
- 'coumarinic',
- 'cooling',
- 'amber',
- 'gassy',
- 'grape',
- 'vanilla',
- 'violet',
- 'earthy',
- 'natural',
- 'malty',
- 'musty',
- 'grassy',
- 'cheesy',
- 'sweet',
- 'bitter',
- 'ripe',
- 'animal',
- 'ethereal',
- 'peach',
- 'coconut',
- 'lemon',
- 'pineapple',
- 'berry',
- 'dry',
- 'savory',
- 'fatty',
- 'garlic',
- 'lily',
- 'powdery',
- 'milky',
- 'orris',
- 'radish',
- 'sharp',
- 'waxy',
- 'cortex',
- 'honey',
- 'alliaceous',
- 'black currant',
- 'hay',
- 'fruity',
- 'ketonic',
- 'lavender',
- 'soapy',
- 'bergamot',
- 'plum',
- 'anisic',
- 'meaty',
- 'fermented',
- 'apricot',
- 'tropical',
- 'clove',
- 'almond',
- 'fishy',
- 'woody',
- 'burnt',
- 'hyacinth',
- 'cognac',
- 'sour',
- 'winey',
- 'sulfurous',
- 'apple',
- 'ozone',
- 'hazelnut',
- 'tea',
- 'strawberry',
- 'odorless',
- 'musk',
- 'warm',
-]
+
 
 criterion = nn.BCEWithLogitsLoss(reduction="none")
 import warnings
@@ -447,7 +314,7 @@ def calculate_channel_attention(dataset, return_layers, args):
 
 def train_epoch(args, model, device, loader, optimizer, weights_regularization, backbone_regularization,
                 head_regularization, target_getter,
-                source_getter, bss_regularization, scheduler, epoch):
+                source_getter, bss_regularization, scheduler, epoch, targets):
     model.train()
 
     meter = Meter()
@@ -536,7 +403,7 @@ def train_epoch(args, model, device, loader, optimizer, weights_regularization, 
             plist = []
             for idx, po in enumerate(p):
                 if po>0.5:
-                    plist.append(odours[idx])
+                    plist.append(targets[idx])
             all_o_preds.append(plist)
 
         # print('gt: ')
@@ -545,7 +412,7 @@ def train_epoch(args, model, device, loader, optimizer, weights_regularization, 
             plist = []
             for idx, po in enumerate(p):
                 if po>0.5:
-                    plist.append(odours[idx])
+                    plist.append(targets[idx])
             all_o_gt.append(plist)
 
     avg_loss = sum(loss_epoch) / len(loss_epoch)
@@ -595,7 +462,7 @@ def eval(args, model, device, loader):
                 plist = []
                 for idx, po in enumerate(p):
                     if po>=0.5:
-                        #plist.append(idx) #(odours[idx])
+                        #plist.append(idx) #(targets[idx])
                         plist.append(1)
                     else:
                         plist.append(0)
@@ -607,7 +474,7 @@ def eval(args, model, device, loader):
                 plist = []
                 for idx, po in enumerate(p):
                     if po>=0.5:
-                        #plist.append(idx) #odours[idx])
+                        #plist.append(idx) #(targets[idx])
                         plist.append(1)
                     else:
                         plist.append(0)
@@ -644,6 +511,7 @@ def main(args):
     device = torch.device("cuda:" + str(args.gpu)) if torch.cuda.is_available() else torch.device("cpu")
     print('device: ', device)
     args.device = device
+
 
     print('Odour dataset name: ', args.dataset)
     # Bunch of classification tasks
@@ -696,7 +564,8 @@ def main(args):
                                                                     frac_valid=train_val_test[1],
                                                                     frac_test=train_val_test[2],
                                                                     train_radio=args.train_radio,
-                                                                    return_smiles=True)
+                                                                    return_smiles=True,
+                                                                    )
 
         print('test dataset: ', test_dataset)
         test_json = {'train': smiles_distrib[0], 'valid': smiles_distrib[1], 'test': smiles_distrib[2]}
@@ -877,7 +746,7 @@ def main(args):
                                                              head_regularization, target_getter,
                                                              source_getter, bss_regularization,
                                                              scheduler=None,
-                                                             epoch=epoch)
+                                                             epoch=epoch, targets=smiles_list)
 
         training_time.epoch_end()
 
