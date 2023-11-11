@@ -15,7 +15,7 @@ gtot_order=1
 
 
 
-dataset=odour_openpom
+dataset=odour #_openpom
 python ${data_path}/finetune.py --data_path ./${data_path}/dataset --input_model_file ${data_path}/model_gin/contextpred.pth --split scaffold --gpu 0 --runseed 0 --gnn_type gin --dataset ${dataset} --gtot_order ${gtot_order} --regularization_type ${rg_type} --finetune_type ${ft_type} --attention_epochs 10 --attention_iteration_limit 10 --tag ${tag} --save_file ${save_file} --patience ${patience} --dist_metric ${dist_metric} --lr 0.005 --dropout_ratio 0.3 --trade_off_backbone 0.005 --trade_off_head 0.0 --decay 1e-7 --batch_size 32 --filename ${filename}
 exit
 #dataset=bace
