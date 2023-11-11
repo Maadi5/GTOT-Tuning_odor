@@ -650,6 +650,8 @@ def main(args):
         num_tasks = 12
     elif args.dataset == "odour":
         num_tasks = 133
+    elif args.dataset == 'odour_openpom':
+        num_tasks = 138
     elif args.dataset == "hiv":
         num_tasks = 1
     elif args.dataset == "pcba":
