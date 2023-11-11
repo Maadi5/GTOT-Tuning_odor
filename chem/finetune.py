@@ -441,7 +441,7 @@ def eval(args, model, device, loader):
     eval_meter = Meter()
     for step, batch in enumerate(tqdm(loader, desc="Iteration", disable=True)):
         batch = batch.to(device)
-        print('BATCH.BATCH VALUE: ', batch.batch)
+        # print('BATCH.BATCH VALUE: ', batch.batch)
         with torch.no_grad():
             pred = model(batch.x, batch.edge_index, batch.edge_attr, batch.batch)
             y = batch.y.view(pred.shape)
