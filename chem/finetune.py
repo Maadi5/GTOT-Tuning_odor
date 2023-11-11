@@ -808,7 +808,7 @@ def main(args):
             writer.add_scalar('data/val loss', val_loss, epoch)
             writer.add_scalar('data/test loss', test_loss, epoch)
         args2 = copy.deepcopy(model.args)
-        save_weights_path = os.path.join(os.getcwd(), 'odour_weights' + str(epoch) + '.pt')
+        save_weights_path = os.path.join(os.getcwd(), args.dataset + '_weights' + str(epoch) + '.pt')
         torch.save({'model_state_dict': model.state_dict(), 'args': args2}, save_weights_path)
         if stopper.step(val_acc, model, test_score=test_acc, IsMaster=args.debug):
             print('stopper.step happening')
