@@ -369,7 +369,8 @@ class MoleculeDataset(InMemoryDataset):
             'dataset/sider',
             'dataset/tox21',
             'dataset/toxcast'
-            'dataset/odour'
+            'dataset/odour',
+            'dataset/odour_openpom'
             ]
 
             downstream_inchi_set = set()
@@ -597,6 +598,26 @@ class MoleculeDataset(InMemoryDataset):
                 data_smiles_list.append(smiles_list[i])
 
         elif self.dataset == 'odour':
+            smiles_list, rdkit_mol_objs, labels = \
+                _load_odour_dataset(self.raw_paths[0])
+            for i in range(len(smiles_list)):
+                #print(i)
+                rdkit_mol = rdkit_mol_objs[i]
+                # # convert aromatic bonds to double bonds
+                # Chem.SanitizeMol(rdkit_mol,
+                #                  sanitizeOps=Chem.SanitizeFlags.SANITIZE_KEKULIZE)
+                data = mol_to_graph_data_obj_simple(rdkit_mol)
+                # manually add mol id
+                data.id = torch.tensor(
+                    [i])  # id here is the index of the mol in
+                # the dataset
+                data.y = torch.tensor(labels[i, :])
+                # print('sum of data: ', torch.sum(data.y))
+                if torch.sum(data.y)==0:
+                    print('sum 0 data: ', data.id)
+                data_list.append(data)
+                data_smiles_list.append(smiles_list[i])
+        elif self.dataset == 'odour_openpom':
             smiles_list, rdkit_mol_objs, labels = \
                 _load_odour_dataset(self.raw_paths[0])
             for i in range(len(smiles_list)):
