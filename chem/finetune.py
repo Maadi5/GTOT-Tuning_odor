@@ -645,6 +645,7 @@ def main(args):
     print('device: ', device)
     args.device = device
 
+    print('Odour dataset name: ', args.dataset)
     # Bunch of classification tasks
     if args.dataset == "tox21":
         num_tasks = 12
